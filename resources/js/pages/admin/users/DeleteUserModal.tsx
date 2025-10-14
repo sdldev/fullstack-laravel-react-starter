@@ -11,6 +11,7 @@ import {
 import { router } from '@inertiajs/react';
 import { AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface User {
     id: number;
@@ -45,9 +46,11 @@ export default function DeleteUserModal({
             onSuccess: () => {
                 setIsDeleting(false);
                 onClose();
+                toast.success('User deleted successfully');
             },
             onError: () => {
                 setIsDeleting(false);
+                toast.error('Failed to delete user. Please try again.');
             },
             preserveScroll: true,
         });
