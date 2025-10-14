@@ -46,6 +46,7 @@ test('admin can create user', function () {
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
 
     $response->assertRedirect('/admin/users');
+    $response->assertSessionHas('success', 'User created successfully.');
     $this->assertDatabaseHas('users', [
         'email' => 'test@example.com',
         'role' => 'user',
@@ -92,6 +93,7 @@ test('admin can update user', function () {
     $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
 
     $response->assertRedirect('/admin/users');
+    $response->assertSessionHas('success', 'User updated successfully.');
     $this->assertDatabaseHas('users', [
         'id' => $user->id,
         'email' => 'updated@example.com',
@@ -108,6 +110,7 @@ test('admin can delete user', function () {
     $response = $this->actingAs($admin)->delete("/admin/users/{$user->id}");
 
     $response->assertRedirect('/admin/users');
+    $response->assertSessionHas('success', 'User deleted successfully.');
     $this->assertDatabaseMissing('users', ['id' => $user->id]);
 });
 
@@ -144,4 +147,16 @@ test('validation fails for duplicate member number', function () {
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
 
     $response->assertSessionHasErrors('member_number');
+});
+
+test('flash messages are shared to inertia props', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $response = $this->actingAs($admin)
+        ->withSession(['success' => 'Test success message'])
+        ->get('/admin/users');
+
+    $response->assertInertia(fn ($page) => $page
+        ->where('flash.success', 'Test success message')
+    );
 });
