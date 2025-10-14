@@ -1,4 +1,9 @@
 import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from '@/components/ui/collapsible';
+import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
@@ -8,14 +13,13 @@ import {
     SidebarMenuSubButton,
     SidebarMenuSubItem,
 } from '@/components/ui/sidebar';
-import { type NavItem, type MainNavItem } from '@/types';
+import { type MainNavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { ChevronRight } from 'lucide-react';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 export function NavMain({ items = [] }: { items: MainNavItem[] }) {
     const page = usePage();
-    
+
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -27,7 +31,9 @@ export function NavMain({ items = [] }: { items: MainNavItem[] }) {
                             <Collapsible key={item.title} asChild defaultOpen>
                                 <SidebarMenuItem>
                                     <CollapsibleTrigger asChild>
-                                        <SidebarMenuButton tooltip={{ children: item.title }}>
+                                        <SidebarMenuButton
+                                            tooltip={{ children: item.title }}
+                                        >
                                             {item.icon && <item.icon />}
                                             <span>{item.title}</span>
                                             <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -36,14 +42,25 @@ export function NavMain({ items = [] }: { items: MainNavItem[] }) {
                                     <CollapsibleContent>
                                         <SidebarMenuSub>
                                             {item.subitem.map((subItem) => (
-                                                <SidebarMenuSubItem key={subItem.title}>
+                                                <SidebarMenuSubItem
+                                                    key={subItem.title}
+                                                >
                                                     <SidebarMenuSubButton
                                                         asChild
-                                                        isActive={page.url.startsWith(subItem.href)}
+                                                        isActive={page.url.startsWith(
+                                                            subItem.href,
+                                                        )}
                                                     >
-                                                        <Link href={subItem.href} prefetch>
-                                                            {subItem.icon && <subItem.icon />}
-                                                            <span>{subItem.title}</span>
+                                                        <Link
+                                                            href={subItem.href}
+                                                            prefetch
+                                                        >
+                                                            {subItem.icon && (
+                                                                <subItem.icon />
+                                                            )}
+                                                            <span>
+                                                                {subItem.title}
+                                                            </span>
                                                         </Link>
                                                     </SidebarMenuSubButton>
                                                 </SidebarMenuSubItem>

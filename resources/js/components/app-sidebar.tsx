@@ -11,9 +11,9 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem, type MainNavItem } from '@/types';
+import { type MainNavItem, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Users, Cog, ArrowRight, Settings } from 'lucide-react';
+import { ArrowRight, Cog, LayoutGrid, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItem[] = [
@@ -50,11 +50,9 @@ const mainNavItems: MainNavItem[] = [
                 title: 'Theme',
                 href: '/settings/appearance',
                 icon: ArrowRight,
-            }
-
+            },
         ],
     },
-
 ];
 
 const footerNavItems: NavItem[] = [
