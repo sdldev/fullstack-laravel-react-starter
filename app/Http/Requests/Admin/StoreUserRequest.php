@@ -43,7 +43,7 @@ class StoreUserRequest extends FormRequest
             'join_date' => 'Tanggal Bergabung',
             'note' => 'Catatan',
             'image' => 'Gambar',
-            'is_active' => 'Aktif',
+            'is_active' => 'Status ',
         ];
     }
 
