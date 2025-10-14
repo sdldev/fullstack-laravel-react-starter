@@ -19,7 +19,7 @@ class UpdateUserRequest extends FormRequest
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,'.$userId,
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|string|in:admin,user',
+            'role' => 'nullable|string|in:admin,user',
             'member_number' => 'nullable|string|max:255|unique:users,member_number,'.$userId,
             'full_name' => 'nullable|string|max:255',
             'address' => 'nullable|string|max:500',
@@ -45,7 +45,7 @@ class UpdateUserRequest extends FormRequest
             'join_date' => 'Tanggal Bergabung',
             'note' => 'Catatan',
             'image' => 'Gambar',
-            'is_active' => 'Aktif',
+            'is_active' => 'Status ',
         ];
     }
 

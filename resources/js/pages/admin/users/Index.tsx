@@ -25,7 +25,7 @@ import React, { useState } from 'react';
 import CreateUserModal from './CreateUserModal';
 import DeleteUserModal from './DeleteUserModal';
 import EditUserModal from './EditUserModal';
-import ShowUserModal from './ShowserModal';
+import ShowUserModal from './ShowUserModal';
 
 interface User {
     id: number;

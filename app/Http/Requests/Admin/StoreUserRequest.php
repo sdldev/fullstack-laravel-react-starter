@@ -25,7 +25,7 @@ class StoreUserRequest extends FormRequest
             'join_date' => 'nullable|date',
             'note' => 'nullable|string|max:1000',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
+            'is_active' => 'nullable|boolean',
         ];
     }
 
@@ -43,7 +43,7 @@ class StoreUserRequest extends FormRequest
             'join_date' => 'Tanggal Bergabung',
             'note' => 'Catatan',
             'image' => 'Gambar',
-            'is_active' => 'Aktif',
+            'is_active' => 'Status ',
         ];
     }
 
