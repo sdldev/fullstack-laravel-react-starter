@@ -8,7 +8,8 @@ import { initializeTheme } from '../hooks/use-appearance';
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
 createInertiaApp({
-    title: (title) => (title ? `${title} - Admin - ${appName}` : `Admin - ${appName}`),
+    title: (title) =>
+        title ? `${title} - Admin - ${appName}` : `Admin - ${appName}`,
     resolve: (name) =>
         resolvePageComponent(
             `../pages/${name}.tsx`,

@@ -1,21 +1,19 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { dashboard, login, register } from '@/routes';
 import { type SharedData } from '@/types';
 import { Head, Link, usePage } from '@inertiajs/react';
-import { 
-    Code2, 
-    Palette, 
-    Shield, 
-    Zap, 
-    Users, 
-    Settings, 
-    Github,
+import {
     CheckCircle,
+    Code2,
+    Github,
+    Palette,
+    Settings,
+    Shield,
     Sparkles,
-    Layers,
-    Smartphone
+    Users,
+    Zap,
 } from 'lucide-react';
 
 export default function Home() {
@@ -24,28 +22,31 @@ export default function Home() {
     return (
         <>
             <Head title="Home - Fullstack Laravel React Starter">
-                <meta name="description" content="Modern fullstack starter kit dengan Laravel 12, React 19, dan Inertia.js. Pemisahan jelas antara admin panel dan public site." />
+                <meta
+                    name="description"
+                    content="Modern fullstack starter kit dengan Laravel 12, React 19, dan Inertia.js. Pemisahan jelas antara admin panel dan public site."
+                />
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
                     href="https://fonts.bunny.net/css?family=inter:400,500,600,700"
                     rel="stylesheet"
                 />
             </Head>
-            
+
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
                 {/* Navigation */}
-                <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg dark:bg-slate-950/80 dark:border-slate-800">
+                <nav className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-lg dark:border-slate-800 dark:bg-slate-950/80">
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="flex h-16 items-center justify-between">
                             <div className="flex items-center space-x-3">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
                                     <Code2 className="h-5 w-5 text-white" />
                                 </div>
-                                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
                                     Laravel React Starter
                                 </span>
                             </div>
-                            
+
                             <div className="flex items-center space-x-4">
                                 {auth.user ? (
                                     <Button asChild variant="default">
@@ -60,7 +61,9 @@ export default function Home() {
                                             <Link href={login()}>Login</Link>
                                         </Button>
                                         <Button asChild>
-                                            <Link href={register()}>Get Started</Link>
+                                            <Link href={register()}>
+                                                Get Started
+                                            </Link>
                                         </Button>
                                     </>
                                 )}
@@ -73,28 +76,37 @@ export default function Home() {
                 <section className="relative px-6 py-24 lg:px-8">
                     <div className="mx-auto max-w-4xl text-center">
                         <div className="mb-8 flex justify-center">
-                            <Badge variant="secondary" className="px-4 py-2 text-sm font-medium">
+                            <Badge
+                                variant="secondary"
+                                className="px-4 py-2 text-sm font-medium"
+                            >
                                 <Sparkles className="mr-2 h-4 w-4" />
                                 Laravel 12 + React 19 + Inertia.js
                             </Badge>
                         </div>
-                        
-                        <h1 className="mb-6 text-5xl font-bold tracking-tight text-slate-900 dark:text-white lg:text-6xl">
+
+                        <h1 className="mb-6 text-5xl font-bold tracking-tight text-slate-900 lg:text-6xl dark:text-white">
                             Modern Fullstack
                             <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 bg-clip-text text-transparent">
                                 Starter Kit
                             </span>
                         </h1>
-                        
+
                         <p className="mb-10 text-xl leading-8 text-slate-600 dark:text-slate-300">
-                            Starter kit fullstack modern yang menggabungkan Laravel 12, React 19, dan Inertia.js 
-                            dengan fokus pada pemisahan yang jelas antara admin panel dan public site.
+                            Starter kit fullstack modern yang menggabungkan
+                            Laravel 12, React 19, dan Inertia.js dengan fokus
+                            pada pemisahan yang jelas antara admin panel dan
+                            public site.
                         </p>
-                        
+
                         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
                             {!auth.user && (
                                 <>
-                                    <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                                    >
                                         <Link href={register()}>
                                             <Zap className="mr-2 h-5 w-5" />
                                             Start Building
@@ -108,7 +120,11 @@ export default function Home() {
                                 </>
                             )}
                             {auth.user && (
-                                <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                                <Button
+                                    asChild
+                                    size="lg"
+                                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                                >
                                     <Link href={dashboard()}>
                                         <Settings className="mr-2 h-5 w-5" />
                                         Go to Dashboard
@@ -122,15 +138,16 @@ export default function Home() {
                 {/* Tech Stack */}
                 <section className="px-6 py-16 lg:px-8">
                     <div className="mx-auto max-w-6xl">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+                        <div className="mb-12 text-center">
+                            <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white">
                                 Tech Stack Modern
                             </h2>
                             <p className="text-lg text-slate-600 dark:text-slate-300">
-                                Dibangun dengan teknologi terdepan untuk performa dan developer experience yang optimal
+                                Dibangun dengan teknologi terdepan untuk
+                                performa dan developer experience yang optimal
                             </p>
                         </div>
-                        
+
                         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                             <Card className="border-0 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50">
                                 <CardContent className="p-6">
@@ -143,13 +160,16 @@ export default function Home() {
                                                 Backend
                                             </p>
                                         </div>
-                                        <Badge className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400" variant="secondary">
+                                        <Badge
+                                            className="bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400"
+                                            variant="secondary"
+                                        >
                                             Latest
                                         </Badge>
                                     </div>
                                 </CardContent>
                             </Card>
-                            
+
                             <Card className="border-0 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
@@ -161,13 +181,16 @@ export default function Home() {
                                                 Frontend
                                             </p>
                                         </div>
-                                        <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400" variant="secondary">
+                                        <Badge
+                                            className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                                            variant="secondary"
+                                        >
                                             Latest
                                         </Badge>
                                     </div>
                                 </CardContent>
                             </Card>
-                            
+
                             <Card className="border-0 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
@@ -179,13 +202,16 @@ export default function Home() {
                                                 Language
                                             </p>
                                         </div>
-                                        <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400" variant="secondary">
+                                        <Badge
+                                            className="bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400"
+                                            variant="secondary"
+                                        >
                                             Latest
                                         </Badge>
                                     </div>
                                 </CardContent>
                             </Card>
-                            
+
                             <Card className="border-0 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
@@ -197,13 +223,16 @@ export default function Home() {
                                                 Framework
                                             </p>
                                         </div>
-                                        <Badge className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400" variant="secondary">
+                                        <Badge
+                                            className="bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-400"
+                                            variant="secondary"
+                                        >
                                             Latest
                                         </Badge>
                                     </div>
                                 </CardContent>
                             </Card>
-                            
+
                             <Card className="border-0 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
@@ -215,13 +244,16 @@ export default function Home() {
                                                 Styling
                                             </p>
                                         </div>
-                                        <Badge className="bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-400" variant="secondary">
+                                        <Badge
+                                            className="bg-cyan-100 text-cyan-800 dark:bg-cyan-900/20 dark:text-cyan-400"
+                                            variant="secondary"
+                                        >
                                             Latest
                                         </Badge>
                                     </div>
                                 </CardContent>
                             </Card>
-                            
+
                             <Card className="border-0 bg-white/50 backdrop-blur-sm dark:bg-slate-800/50">
                                 <CardContent className="p-6">
                                     <div className="flex items-center justify-between">
@@ -233,7 +265,10 @@ export default function Home() {
                                                 Components
                                             </p>
                                         </div>
-                                        <Badge className="bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400" variant="secondary">
+                                        <Badge
+                                            className="bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-400"
+                                            variant="secondary"
+                                        >
                                             Latest
                                         </Badge>
                                     </div>
@@ -244,19 +279,20 @@ export default function Home() {
                 </section>
 
                 {/* Features */}
-                <section className="px-6 py-16 lg:px-8 bg-slate-50 dark:bg-slate-900/50">
+                <section className="bg-slate-50 px-6 py-16 lg:px-8 dark:bg-slate-900/50">
                     <div className="mx-auto max-w-6xl">
-                        <div className="text-center mb-12">
-                            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+                        <div className="mb-12 text-center">
+                            <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white">
                                 Fitur Lengkap & Powerful
                             </h2>
                             <p className="text-lg text-slate-600 dark:text-slate-300">
-                                Semua yang Anda butuhkan untuk membangun aplikasi web modern
+                                Semua yang Anda butuhkan untuk membangun
+                                aplikasi web modern
                             </p>
                         </div>
-                        
+
                         <div className="grid gap-8 md:grid-cols-2">
-                            <Card className="border-0 bg-white dark:bg-slate-800 shadow-lg">
+                            <Card className="border-0 bg-white shadow-lg dark:bg-slate-800">
                                 <CardContent className="p-8">
                                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
                                         <Shield className="h-6 w-6 text-white" />
@@ -265,7 +301,9 @@ export default function Home() {
                                         Authentication System
                                     </h3>
                                     <p className="mb-4 text-slate-600 dark:text-slate-300">
-                                        Complete auth with 2FA, password reset, dan email verification menggunakan Laravel Fortify
+                                        Complete auth with 2FA, password reset,
+                                        dan email verification menggunakan
+                                        Laravel Fortify
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                         <div className="flex items-center text-sm text-slate-600 dark:text-slate-400">
@@ -283,8 +321,8 @@ export default function Home() {
                                     </div>
                                 </CardContent>
                             </Card>
-                            
-                            <Card className="border-0 bg-white dark:bg-slate-800 shadow-lg">
+
+                            <Card className="border-0 bg-white shadow-lg dark:bg-slate-800">
                                 <CardContent className="p-8">
                                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
                                         <Palette className="h-6 w-6 text-white" />
@@ -293,7 +331,8 @@ export default function Home() {
                                         Modern UI/UX
                                     </h3>
                                     <p className="mb-4 text-slate-600 dark:text-slate-300">
-                                        Responsive design dengan dark mode support dan component-based architecture
+                                        Responsive design dengan dark mode
+                                        support dan component-based architecture
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                         <div className="flex items-center text-sm text-slate-600 dark:text-slate-400">
@@ -311,8 +350,8 @@ export default function Home() {
                                     </div>
                                 </CardContent>
                             </Card>
-                            
-                            <Card className="border-0 bg-white dark:bg-slate-800 shadow-lg">
+
+                            <Card className="border-0 bg-white shadow-lg dark:bg-slate-800">
                                 <CardContent className="p-8">
                                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
                                         <Users className="h-6 w-6 text-white" />
@@ -321,7 +360,9 @@ export default function Home() {
                                         Admin Panel
                                     </h3>
                                     <p className="mb-4 text-slate-600 dark:text-slate-300">
-                                        Dashboard lengkap dengan sidebar navigation, user management, dan activity logging
+                                        Dashboard lengkap dengan sidebar
+                                        navigation, user management, dan
+                                        activity logging
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                         <div className="flex items-center text-sm text-slate-600 dark:text-slate-400">
@@ -339,8 +380,8 @@ export default function Home() {
                                     </div>
                                 </CardContent>
                             </Card>
-                            
-                            <Card className="border-0 bg-white dark:bg-slate-800 shadow-lg">
+
+                            <Card className="border-0 bg-white shadow-lg dark:bg-slate-800">
                                 <CardContent className="p-8">
                                     <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
                                         <Settings className="h-6 w-6 text-white" />
@@ -349,7 +390,8 @@ export default function Home() {
                                         Advanced Features
                                     </h3>
                                     <p className="mb-4 text-slate-600 dark:text-slate-300">
-                                        Image processing, backup system, dan configuration management yang powerful
+                                        Image processing, backup system, dan
+                                        configuration management yang powerful
                                     </p>
                                     <div className="flex flex-wrap gap-2">
                                         <div className="flex items-center text-sm text-slate-600 dark:text-slate-400">
@@ -374,23 +416,32 @@ export default function Home() {
                 {/* CTA Section */}
                 <section className="px-6 py-24 lg:px-8">
                     <div className="mx-auto max-w-4xl text-center">
-                        <h2 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">
+                        <h2 className="mb-6 text-4xl font-bold text-slate-900 dark:text-white">
                             Siap Memulai Project Anda?
                         </h2>
-                        <p className="text-xl text-slate-600 dark:text-slate-300 mb-10">
-                            Dapatkan starter kit lengkap dengan semua fitur modern yang Anda butuhkan
+                        <p className="mb-10 text-xl text-slate-600 dark:text-slate-300">
+                            Dapatkan starter kit lengkap dengan semua fitur
+                            modern yang Anda butuhkan
                         </p>
-                        
+
                         <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
                             {!auth.user ? (
                                 <>
-                                    <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                                    >
                                         <Link href={register()}>
                                             Mulai Sekarang
                                         </Link>
                                     </Button>
                                     <Button asChild size="lg" variant="outline">
-                                        <a href="https://github.com/sdldev/fullstack-laravel-react-starter" target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href="https://github.com/sdldev/fullstack-laravel-react-starter"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <Github className="mr-2 h-5 w-5" />
                                             View on GitHub
                                         </a>
@@ -398,14 +449,22 @@ export default function Home() {
                                 </>
                             ) : (
                                 <>
-                                    <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                                    >
                                         <Link href={dashboard()}>
                                             <Settings className="mr-2 h-5 w-5" />
                                             Go to Dashboard
                                         </Link>
                                     </Button>
                                     <Button asChild size="lg" variant="outline">
-                                        <a href="https://github.com/sdldev/fullstack-laravel-react-starter" target="_blank" rel="noopener noreferrer">
+                                        <a
+                                            href="https://github.com/sdldev/fullstack-laravel-react-starter"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
                                             <Github className="mr-2 h-5 w-5" />
                                             GitHub Repository
                                         </a>
@@ -417,19 +476,20 @@ export default function Home() {
                 </section>
 
                 {/* Footer */}
-                <footer className="border-t bg-slate-50 dark:bg-slate-900 dark:border-slate-800">
+                <footer className="border-t bg-slate-50 dark:border-slate-800 dark:bg-slate-900">
                     <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
                         <div className="text-center">
-                            <div className="flex items-center justify-center space-x-3 mb-4">
+                            <div className="mb-4 flex items-center justify-center space-x-3">
                                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
                                     <Code2 className="h-5 w-5 text-white" />
                                 </div>
-                                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
                                     Laravel React Starter
                                 </span>
                             </div>
                             <p className="text-sm text-slate-600 dark:text-slate-400">
-                                Built with ❤️ using Laravel, React, and the amazing open source community
+                                Built with ❤️ using Laravel, React, and the
+                                amazing open source community
                             </p>
                         </div>
                     </div>

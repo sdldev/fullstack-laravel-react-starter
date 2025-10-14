@@ -1,7 +1,7 @@
-import { Head } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Settings, Activity, TrendingUp } from 'lucide-react';
+import AppLayout from '@/layouts/app-layout';
+import { Head } from '@inertiajs/react';
+import { Activity, Settings, TrendingUp, Users } from 'lucide-react';
 
 interface AdminDashboardProps {
     breadcrumbs: Array<{
@@ -45,12 +45,15 @@ export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Admin Dashboard" />
-            
+
             <div className="space-y-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        Dashboard
+                    </h1>
                     <p className="text-muted-foreground">
-                        Welcome to the admin panel. Monitor and manage your application from here.
+                        Welcome to the admin panel. Monitor and manage your
+                        application from here.
                     </p>
                 </div>
 
@@ -64,13 +67,19 @@ export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
                                 <stat.icon className="h-4 w-4 text-muted-foreground" />
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{stat.value}</div>
+                                <div className="text-2xl font-bold">
+                                    {stat.value}
+                                </div>
                                 <p className="text-xs text-muted-foreground">
-                                    <span className={`${
-                                        stat.changeType === 'positive' ? 'text-green-600' : 
-                                        stat.changeType === 'negative' ? 'text-red-600' : 
-                                        'text-muted-foreground'
-                                    }`}>
+                                    <span
+                                        className={`${
+                                            stat.changeType === 'positive'
+                                                ? 'text-green-600'
+                                                : stat.changeType === 'negative'
+                                                  ? 'text-red-600'
+                                                  : 'text-muted-foreground'
+                                        }`}
+                                    >
                                         {stat.change}
                                     </span>{' '}
                                     from last month
@@ -86,7 +95,7 @@ export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
                             <CardTitle>Overview</CardTitle>
                         </CardHeader>
                         <CardContent className="pl-2">
-                            <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+                            <div className="flex h-[200px] items-center justify-center text-muted-foreground">
                                 Analytics Chart Placeholder
                             </div>
                         </CardContent>
@@ -98,24 +107,36 @@ export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
                         <CardContent>
                             <div className="space-y-4">
                                 <div className="flex items-center">
-                                    <div className="w-2 h-2 bg-blue-600 rounded-full mr-3"></div>
+                                    <div className="mr-3 h-2 w-2 rounded-full bg-blue-600"></div>
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium">New user registered</p>
-                                        <p className="text-xs text-muted-foreground">2 minutes ago</p>
+                                        <p className="text-sm font-medium">
+                                            New user registered
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            2 minutes ago
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-2 h-2 bg-green-600 rounded-full mr-3"></div>
+                                    <div className="mr-3 h-2 w-2 rounded-full bg-green-600"></div>
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium">System backup completed</p>
-                                        <p className="text-xs text-muted-foreground">1 hour ago</p>
+                                        <p className="text-sm font-medium">
+                                            System backup completed
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            1 hour ago
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center">
-                                    <div className="w-2 h-2 bg-yellow-600 rounded-full mr-3"></div>
+                                    <div className="mr-3 h-2 w-2 rounded-full bg-yellow-600"></div>
                                     <div className="flex-1">
-                                        <p className="text-sm font-medium">Settings updated</p>
-                                        <p className="text-xs text-muted-foreground">3 hours ago</p>
+                                        <p className="text-sm font-medium">
+                                            Settings updated
+                                        </p>
+                                        <p className="text-xs text-muted-foreground">
+                                            3 hours ago
+                                        </p>
                                     </div>
                                 </div>
                             </div>
