@@ -1,12 +1,12 @@
-import { cn } from '@/lib/utils';
-import { Check } from 'lucide-react';
-import { HTMLAttributes } from 'react';
+import { Label } from '@/components/ui/label';
 import {
     ThemeColor,
     ThemeRadius,
     useThemeCustomization,
 } from '@/hooks/use-theme-customization';
-import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
+import { Check } from 'lucide-react';
+import { HTMLAttributes } from 'react';
 
 export default function ThemeCustomizer({
     className = '',
@@ -27,35 +27,19 @@ export default function ThemeCustomizer({
         colors: { light: string; dark: string };
     }[] = [
         {
-            value: 'zinc',
-            label: 'Zinc',
+            value: 'favorite',
+            label: 'Favorite',
             colors: {
-                light: 'bg-zinc-900',
-                dark: 'bg-zinc-700',
-            },
-        },
-        {
-            value: 'slate',
-            label: 'Slate',
-            colors: {
-                light: 'bg-slate-900',
+                light: 'bg-slate-800',
                 dark: 'bg-slate-700',
             },
         },
         {
-            value: 'stone',
-            label: 'Stone',
+            value: 'supabase',
+            label: 'Supabase',
             colors: {
-                light: 'bg-stone-900',
-                dark: 'bg-stone-700',
-            },
-        },
-        {
-            value: 'gray',
-            label: 'Gray',
-            colors: {
-                light: 'bg-gray-900',
-                dark: 'bg-gray-700',
+                light: 'bg-emerald-900',
+                dark: 'bg-emerald-700',
             },
         },
         {
@@ -67,59 +51,11 @@ export default function ThemeCustomizer({
             },
         },
         {
-            value: 'red',
-            label: 'Red',
-            colors: {
-                light: 'bg-red-600',
-                dark: 'bg-red-700',
-            },
-        },
-        {
-            value: 'rose',
-            label: 'Rose',
-            colors: {
-                light: 'bg-rose-600',
-                dark: 'bg-rose-700',
-            },
-        },
-        {
-            value: 'orange',
-            label: 'Orange',
-            colors: {
-                light: 'bg-orange-600',
-                dark: 'bg-orange-700',
-            },
-        },
-        {
-            value: 'green',
-            label: 'Green',
-            colors: {
-                light: 'bg-green-600',
-                dark: 'bg-green-700',
-            },
-        },
-        {
             value: 'blue',
-            label: 'Blue',
+            label: 'Modern Blue',
             colors: {
-                light: 'bg-blue-600',
-                dark: 'bg-blue-700',
-            },
-        },
-        {
-            value: 'yellow',
-            label: 'Yellow',
-            colors: {
-                light: 'bg-yellow-600',
-                dark: 'bg-yellow-700',
-            },
-        },
-        {
-            value: 'violet',
-            label: 'Violet',
-            colors: {
-                light: 'bg-violet-600',
-                dark: 'bg-violet-700',
+                light: 'bg-blue-500',
+                dark: 'bg-blue-600',
             },
         },
     ];
@@ -142,7 +78,7 @@ export default function ThemeCustomizer({
                             )}
                         >
                             {radius === option.value && (
-                                <Check className="absolute right-2 top-2 h-4 w-4 text-primary" />
+                                <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
                             )}
                             <div
                                 className={cn(
@@ -177,7 +113,7 @@ export default function ThemeCustomizer({
                             )}
                         >
                             {color === option.value && (
-                                <Check className="absolute right-2 top-2 h-4 w-4 text-primary" />
+                                <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
                             )}
                             <div className="flex gap-1">
                                 <div
