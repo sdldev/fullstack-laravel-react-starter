@@ -23,11 +23,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function create()
-    {
-        return Inertia::render('admin/users/Create');
-    }
-
     public function store(\App\Http\Requests\Admin\StoreUserRequest $request)
     {
         $data = $request->validated();
@@ -42,13 +37,6 @@ class UserController extends Controller
         User::create($data);
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
-    }
-
-    public function edit(User $user)
-    {
-        return Inertia::render('admin/users/Edit', [
-            'user' => $user,
-        ]);
     }
 
     public function update(\App\Http\Requests\Admin\UpdateUserRequest $request, User $user)
