@@ -44,13 +44,6 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
-    public function show(User $user)
-    {
-        return Inertia::render('admin/users/Show', [
-            'user' => $user,
-        ]);
-    }
-
     public function edit(User $user)
     {
         return Inertia::render('admin/users/Edit', [
@@ -83,11 +76,13 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(User $user)
     {
+        // Prevent admin from deleting themselves
+        if ($user->id === auth()->id()) {
+            abort(403, 'You cannot delete your own account.');
+        }
+
         // Delete image if exists
         if ($user->image && \Storage::disk('public')->exists($user->image)) {
             \Storage::disk('public')->delete($user->image);
