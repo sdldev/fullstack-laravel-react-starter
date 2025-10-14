@@ -11,15 +11,15 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type NavItem } from '@/types';
+import { type NavItem, type MainNavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LayoutGrid, Users } from 'lucide-react';
+import { LayoutGrid, Users, Cog, ArrowRight, Settings } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const mainNavItems: MainNavItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard(),
+        href: '/admin/dashboard',
         icon: LayoutGrid,
     },
     {
@@ -27,6 +27,34 @@ const mainNavItems: NavItem[] = [
         href: '/admin/users',
         icon: Users,
     },
+    {
+        title: 'Config',
+        icon: Cog,
+        subitem: [
+            {
+                title: 'Profile',
+                href: '/settings/profile',
+                icon: ArrowRight,
+            },
+            {
+                title: 'Password',
+                href: '/settings/password',
+                icon: ArrowRight,
+            },
+            {
+                title: 'Two Factor Authentication',
+                href: '/settings/two-factor',
+                icon: ArrowRight,
+            },
+            {
+                title: 'Theme',
+                href: '/settings/appearance',
+                icon: ArrowRight,
+            }
+
+        ],
+    },
+
 ];
 
 const footerNavItems: NavItem[] = [
