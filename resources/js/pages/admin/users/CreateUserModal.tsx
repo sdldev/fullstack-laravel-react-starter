@@ -63,7 +63,6 @@ export default function CreateUserModal({
             onSuccess: () => {
                 reset();
                 onClose();
-                toast.success('User created successfully');
             },
             onError: () => {
                 toast.error('Failed to create user. Please check the form.');

@@ -97,7 +97,6 @@ export default function EditUserModal({
             onSuccess: () => {
                 reset();
                 onClose();
-                toast.success('User updated successfully');
             },
             onError: () => {
                 toast.error('Failed to update user. Please check the form.');
