@@ -9,9 +9,14 @@ interface FlashMessages {
     warning?: string;
 }
 
+interface PageProps {
+    flash?: FlashMessages;
+    [key: string]: unknown;
+}
+
 export function useFlashMessages() {
-    const page = usePage();
-    const flash = (page.props as any).flash as FlashMessages | undefined;
+    const page = usePage<PageProps>();
+    const flash = page.props.flash;
 
     useEffect(() => {
         if (!flash) return;

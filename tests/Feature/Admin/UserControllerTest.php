@@ -162,7 +162,9 @@ test('flash messages are shared to inertia props', function () {
 
     $response->assertInertia(fn ($page) => $page
         ->where('flash.success', 'Test success message')
-=======
+    );
+});
+
 test('admin can update user with partial data', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $user = User::factory()->create([
