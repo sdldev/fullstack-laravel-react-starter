@@ -18,9 +18,13 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
+import CreateUserModal from './CreateUserModal';
+import DeleteUserModal from './DeleteUserModal';
+import EditUserModal from './EditUserModal';
+import ShowUserModal from './ShowserModal';
 
 interface User {
     id: number;
@@ -32,6 +36,9 @@ interface User {
     phone: string | null;
     join_date: string | null;
     is_active: boolean;
+    email_verified_at: string | null;
+    created_at: string;
+    updated_at: string;
 }
 
 interface UsersIndexProps {
@@ -51,6 +58,27 @@ interface UsersIndexProps {
 }
 
 export default function Index({ users, breadcrumbs }: UsersIndexProps) {
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isShowModalOpen, setIsShowModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+    const handleShowUser = (user: User) => {
+        setSelectedUser(user);
+        setIsShowModalOpen(true);
+    };
+
+    const handleEditUser = (user: User) => {
+        setSelectedUser(user);
+        setIsEditModalOpen(true);
+    };
+
+    const handleDeleteUser = (user: User) => {
+        setSelectedUser(user);
+        setIsDeleteModalOpen(true);
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Users Management" />
@@ -61,11 +89,9 @@ export default function Index({ users, breadcrumbs }: UsersIndexProps) {
                             Users Management
                         </h1>
                     </div>
-                    <Button asChild>
-                        <Link href="/admin/users/create">
-                            <Plus className="mr-2 h-4 w-4" />
-                            Add User
-                        </Link>
+                    <Button onClick={() => setIsCreateModalOpen(true)}>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add User
                     </Button>
                 </div>
                 <Table>
@@ -124,46 +150,25 @@ export default function Index({ users, breadcrumbs }: UsersIndexProps) {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            asChild
+                                            onClick={() => handleShowUser(user)}
                                         >
-                                            <Link
-                                                href={`/admin/users/${user.id}`}
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                            </Link>
+                                            <Eye className="h-4 w-4" />
                                         </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            asChild
+                                            onClick={() => handleEditUser(user)}
                                         >
-                                            <Link
-                                                href={`/admin/users/${user.id}/edit`}
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </Link>
+                                            <Edit className="h-4 w-4" />
                                         </Button>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            asChild
+                                            onClick={() =>
+                                                handleDeleteUser(user)
+                                            }
                                         >
-                                            <Link
-                                                href={`/admin/users/${user.id}`}
-                                                method="delete"
-                                                as="button"
-                                                onClick={(e) => {
-                                                    if (
-                                                        !confirm(
-                                                            'Are you sure you want to delete this user?',
-                                                        )
-                                                    ) {
-                                                        e.preventDefault();
-                                                    }
-                                                }}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Link>
+                                            <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </TableCell>
@@ -255,6 +260,39 @@ export default function Index({ users, breadcrumbs }: UsersIndexProps) {
                         </PaginationContent>
                     </Pagination>
                 )}
+
+                {/* Modals */}
+                <CreateUserModal
+                    isOpen={isCreateModalOpen}
+                    onClose={() => setIsCreateModalOpen(false)}
+                />
+
+                <ShowUserModal
+                    isOpen={isShowModalOpen}
+                    onClose={() => {
+                        setIsShowModalOpen(false);
+                        setSelectedUser(null);
+                    }}
+                    user={selectedUser}
+                />
+
+                <EditUserModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setSelectedUser(null);
+                    }}
+                    user={selectedUser}
+                />
+
+                <DeleteUserModal
+                    isOpen={isDeleteModalOpen}
+                    onClose={() => {
+                        setIsDeleteModalOpen(false);
+                        setSelectedUser(null);
+                    }}
+                    user={selectedUser}
+                />
             </div>
         </AppLayout>
     );
