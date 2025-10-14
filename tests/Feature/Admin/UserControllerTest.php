@@ -73,7 +73,7 @@ test('user is auto-approved when created', function () {
 
     $this->assertDatabaseHas('users', [
         'email' => 'test@example.com',
-        'is_active' => 1,
+        'is_active' => true,
     ]);
 });
 
