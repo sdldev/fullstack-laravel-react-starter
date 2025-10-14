@@ -26,11 +26,6 @@ export default function Home() {
                     name="description"
                     content="Modern fullstack starter kit dengan Laravel 12, React 19, dan Inertia.js. Pemisahan jelas antara admin panel dan public site."
                 />
-                <link rel="preconnect" href="https://fonts.bunny.net" />
-                <link
-                    href="https://fonts.bunny.net/css?family=inter:400,500,600,700"
-                    rel="stylesheet"
-                />
             </Head>
 
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
