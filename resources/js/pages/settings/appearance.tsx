@@ -2,6 +2,8 @@ import { Head } from '@inertiajs/react';
 
 import AppearanceTabs from '@/components/appearance-tabs';
 import HeadingSmall from '@/components/heading-small';
+import ThemeCustomizer from '@/components/theme-customizer';
+import { Separator } from '@/components/ui/separator';
 import { type BreadcrumbItem } from '@/types';
 
 import AppLayout from '@/layouts/app-layout';
@@ -22,11 +24,23 @@ export default function Appearance() {
 
             <SettingsLayout>
                 <div className="space-y-6">
-                    <HeadingSmall
-                        title="Appearance settings"
-                        description="Update your account's appearance settings"
-                    />
-                    <AppearanceTabs />
+                    <div className="space-y-3">
+                        <HeadingSmall
+                            title="Theme"
+                            description="Select light or dark mode"
+                        />
+                        <AppearanceTabs />
+                    </div>
+
+                    <Separator />
+
+                    <div className="space-y-3">
+                        <HeadingSmall
+                            title="Customize"
+                            description="Pick a style and color for your components"
+                        />
+                        <ThemeCustomizer />
+                    </div>
                 </div>
             </SettingsLayout>
         </AppLayout>
