@@ -31,6 +31,15 @@ class UserFactory extends Factory
             'two_factor_secret' => Str::random(10),
             'two_factor_recovery_codes' => Str::random(10),
             'two_factor_confirmed_at' => now(),
+            'role' => 'user',
+            'member_number' => 'MEM'.fake()->unique()->numberBetween(1000, 9999),
+            'full_name' => fake()->name(),
+            'address' => fake()->address(),
+            'phone' => fake()->phoneNumber(),
+            'join_date' => fake()->dateTimeBetween('-2 years', 'now'),
+            'note' => fake()->optional()->sentence(),
+            'image' => null,
+            'is_active' => true,
         ];
     }
 
@@ -53,6 +62,26 @@ class UserFactory extends Factory
             'two_factor_secret' => null,
             'two_factor_recovery_codes' => null,
             'two_factor_confirmed_at' => null,
+        ]);
+    }
+
+    /**
+     * Indicate that the user is an admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+        ]);
+    }
+
+    /**
+     * Indicate that the user is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
         ]);
     }
 }

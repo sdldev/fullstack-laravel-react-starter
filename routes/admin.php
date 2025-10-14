@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,10 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified', 'can:admin'])->group(function () {
     Route::get('/admin', [DashboardController::class, 'index'])->name('admin.dashboard');
 
-    // Example admin resource routes would go here
-    // Route::resource('admin/users', Admin\UserController::class)->names('admin.users');
-    // Route::resource('admin/settings', Admin\SettingController::class)->names('admin.settings');
+    // User management routes
+    Route::resource('admin/users', UserController::class)->names('admin.users');
 });
