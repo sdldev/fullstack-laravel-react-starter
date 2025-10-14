@@ -4,6 +4,7 @@ import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from '../hooks/use-appearance';
+import { initializeThemeCustomization } from '../hooks/use-theme-customization';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -26,3 +27,4 @@ createInertiaApp({
 
 // Initialize theme on load
 initializeTheme();
+initializeThemeCustomization();
