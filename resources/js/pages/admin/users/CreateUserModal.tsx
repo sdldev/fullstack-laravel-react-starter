@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler } from 'react';
+import { toast } from 'sonner';
 
 interface CreateUserModalProps {
     isOpen: boolean;
@@ -62,6 +63,10 @@ export default function CreateUserModal({
             onSuccess: () => {
                 reset();
                 onClose();
+                toast.success('User created successfully');
+            },
+            onError: () => {
+                toast.error('Failed to create user. Please check the form.');
             },
             preserveScroll: true,
         });

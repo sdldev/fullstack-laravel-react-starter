@@ -19,5 +19,5 @@ Route::middleware(['auth', 'verified', 'can:admin'])->group(function () {
     Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
     // User management routes
-    Route::resource('admin/users', UserController::class)->names('admin.users');
+    Route::resource('admin/users', UserController::class)->except(['create', 'show', 'edit'])->names('admin.users');
 });

@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface User {
     id: number;
@@ -96,6 +97,10 @@ export default function EditUserModal({
             onSuccess: () => {
                 reset();
                 onClose();
+                toast.success('User updated successfully');
+            },
+            onError: () => {
+                toast.error('Failed to update user. Please check the form.');
             },
             preserveScroll: true,
         });

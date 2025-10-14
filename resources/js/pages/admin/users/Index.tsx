@@ -17,6 +17,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useFlashMessages } from '@/hooks/use-flash-messages';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
@@ -58,6 +59,8 @@ interface UsersIndexProps {
 }
 
 export default function Index({ users, breadcrumbs }: UsersIndexProps) {
+    useFlashMessages();
+
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isShowModalOpen, setIsShowModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
