@@ -261,6 +261,63 @@ php artisan test --filter=DashboardTest
 php artisan test --coverage
 ```
 
+## 🔒 Security
+
+Aplikasi ini telah melalui analisis keamanan komprehensif. Dokumentasi keamanan lengkap tersedia di:
+
+- **[SECURITY_ANALYSIS.md](SECURITY_ANALYSIS.md)** - Analisis kerentanan dan penilaian risiko
+- **[SECURITY_IMPROVEMENTS.md](SECURITY_IMPROVEMENTS.md)** - Panduan implementasi perbaikan keamanan
+- **[SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md)** - Checklist deployment dan best practices
+
+### 🛡️ Fitur Keamanan Built-in
+
+- ✅ **Two-Factor Authentication** - Laravel Fortify 2FA
+- ✅ **Rate Limiting** - Login throttling (5 attempts)
+- ✅ **CSRF Protection** - Laravel & Inertia built-in
+- ✅ **SQL Injection Protection** - Eloquent ORM
+- ✅ **XSS Protection** - React auto-escaping
+- ✅ **Password Hashing** - Bcrypt (12 rounds)
+- ✅ **Activity Logging** - Spatie Activity Log
+
+### ⚠️ Rekomendasi Pre-Production
+
+Sebelum deploy ke production, **WAJIB** review dan implementasi:
+
+1. **Critical Issues**
+   - Change default passwords di seeder
+   - Filter sensitive data di Inertia props
+
+2. **High Priority**
+   - Implement file content validation
+   - Enable HTTPS enforcement
+   - Add security headers
+   - Configure security logging
+
+3. **Configuration**
+   ```env
+   APP_ENV=production
+   APP_DEBUG=false
+   SESSION_ENCRYPT=true
+   SESSION_LIFETIME=30
+   SESSION_SECURE_COOKIE=true
+   ```
+
+Baca **[SECURITY_ANALYSIS.md](SECURITY_ANALYSIS.md)** untuk detail lengkap.
+
+### 🔍 Security Audit
+
+```bash
+# Run security checks
+composer audit
+npm audit --audit-level=high
+
+# Static analysis
+./vendor/bin/phpstan analyse
+
+# Run security tests
+php artisan test --filter=SecurityTest
+```
+
 ## 📝 Deployment
 
 ### Production Build
