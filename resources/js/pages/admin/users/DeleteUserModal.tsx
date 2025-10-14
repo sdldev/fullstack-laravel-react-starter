@@ -46,7 +46,6 @@ export default function DeleteUserModal({
             onSuccess: () => {
                 setIsDeleting(false);
                 onClose();
-                toast.success('User deleted successfully');
             },
             onError: () => {
                 setIsDeleting(false);
