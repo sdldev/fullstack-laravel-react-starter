@@ -35,7 +35,9 @@ interface CreateUserData {
     member_number: string;
     full_name: string;
     phone: string;
+    address: string;
     join_date: string;
+    note: string;
     is_active: boolean;
 }
 
@@ -53,7 +55,9 @@ export default function CreateUserModal({
             member_number: '',
             full_name: '',
             phone: '',
+            address: '',
             join_date: new Date().toISOString().split('T')[0],
+            note: '',
             is_active: true,
         });
 
@@ -76,8 +80,14 @@ export default function CreateUserModal({
         onClose();
     };
 
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            handleClose();
+        }
+    };
+
     return (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Create New User</DialogTitle>
@@ -205,7 +215,7 @@ export default function CreateUserModal({
 
                         {/* Member Number */}
                         <div className="space-y-2">
-                            <Label htmlFor="member_number">Member Number</Label>
+                            <Label htmlFor="member_number">Member Number *</Label>
                             <Input
                                 id="member_number"
                                 value={data.member_number}
@@ -215,6 +225,7 @@ export default function CreateUserModal({
                                 aria-invalid={
                                     errors.member_number ? 'true' : 'false'
                                 }
+                                required
                             />
                             {errors.member_number && (
                                 <p className="text-sm text-destructive">
@@ -225,7 +236,7 @@ export default function CreateUserModal({
 
                         {/* Full Name */}
                         <div className="space-y-2">
-                            <Label htmlFor="full_name">Full Name</Label>
+                            <Label htmlFor="full_name">Full Name *</Label>
                             <Input
                                 id="full_name"
                                 value={data.full_name}
@@ -235,6 +246,7 @@ export default function CreateUserModal({
                                 aria-invalid={
                                     errors.full_name ? 'true' : 'false'
                                 }
+                                required
                             />
                             {errors.full_name && (
                                 <p className="text-sm text-destructive">
@@ -245,7 +257,7 @@ export default function CreateUserModal({
 
                         {/* Phone */}
                         <div className="space-y-2">
-                            <Label htmlFor="phone">Phone</Label>
+                            <Label htmlFor="phone">Phone *</Label>
                             <Input
                                 id="phone"
                                 type="tel"
@@ -254,10 +266,48 @@ export default function CreateUserModal({
                                     setData('phone', e.target.value)
                                 }
                                 aria-invalid={errors.phone ? 'true' : 'false'}
+                                required
                             />
                             {errors.phone && (
                                 <p className="text-sm text-destructive">
                                     {errors.phone}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Address */}
+                        <div className="space-y-2">
+                            <Label htmlFor="address">Address *</Label>
+                            <Input
+                                id="address"
+                                value={data.address}
+                                onChange={(e) =>
+                                    setData('address', e.target.value)
+                                }
+                                aria-invalid={errors.address ? 'true' : 'false'}
+                                required
+                            />
+                            {errors.address && (
+                                <p className="text-sm text-destructive">
+                                    {errors.address}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Note */}
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="note">Note</Label>
+                            <Input
+                                id="note"
+                                value={data.note}
+                                onChange={(e) =>
+                                    setData('note', e.target.value)
+                                }
+                                aria-invalid={errors.note ? 'true' : 'false'}
+                            />
+                            {errors.note && (
+                                <p className="text-sm text-destructive">
+                                    {errors.note}
                                 </p>
                             )}
                         </div>

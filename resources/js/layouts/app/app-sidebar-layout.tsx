@@ -2,9 +2,9 @@ import { AppContent } from '@/components/app-content';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import { useFlashMessages } from '@/hooks/use-flash-messages';
 import { type BreadcrumbItem } from '@/types';
 import { type PropsWithChildren } from 'react';
-import { useFlashMessages } from '@/hooks/use-flash-messages';
 
 export default function AppSidebarLayout({
     children,

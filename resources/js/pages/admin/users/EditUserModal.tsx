@@ -29,7 +29,9 @@ interface User {
     member_number: string | null;
     full_name: string | null;
     phone: string | null;
+    address: string | null;
     join_date: string | null;
+    note: string | null;
     is_active: boolean;
 }
 
@@ -48,7 +50,9 @@ interface EditUserData {
     member_number: string;
     full_name: string;
     phone: string;
+    address: string;
     join_date: string;
+    note: string;
     is_active: boolean;
 }
 
@@ -67,7 +71,9 @@ export default function EditUserModal({
             member_number: '',
             full_name: '',
             phone: '',
+            address: '',
             join_date: '',
+            note: '',
             is_active: true,
         });
 
@@ -82,8 +88,10 @@ export default function EditUserModal({
                 member_number: user.member_number || '',
                 full_name: user.full_name || '',
                 phone: user.phone || '',
+                address: user.address || '',
                 join_date:
                     user.join_date || new Date().toISOString().split('T')[0],
+                note: user.note || '',
                 is_active: user.is_active,
             });
         }
@@ -110,10 +118,16 @@ export default function EditUserModal({
         onClose();
     };
 
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            handleClose();
+        }
+    };
+
     if (!user) return null;
 
     return (
-        <Dialog open={isOpen} onOpenChange={handleClose}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Edit User</DialogTitle>
@@ -297,6 +311,42 @@ export default function EditUserModal({
                             {errors.phone && (
                                 <p className="text-sm text-destructive">
                                     {errors.phone}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Address */}
+                        <div className="space-y-2">
+                            <Label htmlFor="address">Address</Label>
+                            <Input
+                                id="address"
+                                value={data.address}
+                                onChange={(e) =>
+                                    setData('address', e.target.value)
+                                }
+                                aria-invalid={errors.address ? 'true' : 'false'}
+                            />
+                            {errors.address && (
+                                <p className="text-sm text-destructive">
+                                    {errors.address}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Note */}
+                        <div className="space-y-2 md:col-span-2">
+                            <Label htmlFor="note">Note</Label>
+                            <Input
+                                id="note"
+                                value={data.note}
+                                onChange={(e) =>
+                                    setData('note', e.target.value)
+                                }
+                                aria-invalid={errors.note ? 'true' : 'false'}
+                            />
+                            {errors.note && (
+                                <p className="text-sm text-destructive">
+                                    {errors.note}
                                 </p>
                             )}
                         </div>

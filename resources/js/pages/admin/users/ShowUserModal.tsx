@@ -15,8 +15,10 @@ import {
     Edit,
     Hash,
     Mail,
+    MapPin,
     Phone,
     Shield,
+    StickyNote,
     Trash2,
     User as UserIcon,
 } from 'lucide-react';
@@ -32,7 +34,9 @@ interface User {
     member_number: string | null;
     full_name: string | null;
     phone: string | null;
+    address: string | null;
     join_date: string | null;
+    note: string | null;
     is_active: boolean;
     email_verified_at: string | null;
     created_at: string;
@@ -61,11 +65,17 @@ export default function ShowUserModal({
         setIsDeleteModalOpen(true);
     };
 
+    const handleOpenChange = (open: boolean) => {
+        if (!open) {
+            onClose();
+        }
+    };
+
     if (!user) return null;
 
     return (
         <>
-            <Dialog open={isOpen} onOpenChange={onClose}>
+            <Dialog open={isOpen} onOpenChange={handleOpenChange}>
                 <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
                     <DialogHeader>
                         <DialogTitle className="text-2xl">
@@ -92,7 +102,7 @@ export default function ShowUserModal({
                             </Button>
                         </div>
 
-                        <div className="grid gap-6 md:grid-cols-2">
+                        <div className="grid gap-6 md:grid-cols-3">
                             {/* Basic Information */}
                             <Card>
                                 <CardHeader>
@@ -165,6 +175,50 @@ export default function ShowUserModal({
                                                     </span>
                                                 </div>
                                             </div>
+                                        )}
+
+                                        {user.address && (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm font-medium text-muted-foreground">
+                                                    Address:
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    <MapPin className="h-4 w-4 text-muted-foreground" />
+                                                    <span className="text-sm font-medium">
+                                                        {user.address}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+
+                            {/* Additional Information */}
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2">
+                                        <StickyNote className="h-5 w-5" />
+                                        Additional Information
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    <div className="grid gap-3">
+                                        {user.note && (
+                                            <div className="space-y-2">
+                                                <span className="text-sm font-medium text-muted-foreground">
+                                                    Note:
+                                                </span>
+                                                <p className="text-sm bg-muted p-3 rounded-md">
+                                                    {user.note}
+                                                </p>
+                                            </div>
+                                        )}
+
+                                        {!user.note && (
+                                            <p className="text-sm text-muted-foreground">
+                                                No additional notes.
+                                            </p>
                                         )}
                                     </div>
                                 </CardContent>
