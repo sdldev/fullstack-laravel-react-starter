@@ -54,12 +54,28 @@ class HandleInertiaRequests extends Middleware
             $flashMessages['uuid'] = (string) Str::uuid();
         }
 
+        // Share only safe user attributes to the client to avoid leaking sensitive data
+        $safeUser = null;
+        if ($request->user()) {
+            $u = $request->user();
+            $safeUser = [
+                'id' => $u->id,
+                'name' => $u->name,
+                'email' => $u->email,
+                'role' => $u->role,
+                'full_name' => $u->full_name,
+                'image' => $u->image,
+                'is_active' => $u->is_active,
+                'has_two_factor' => ! is_null($u->two_factor_secret),
+            ];
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $safeUser,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'flash' => $hasFlash ? $flashMessages : null,
