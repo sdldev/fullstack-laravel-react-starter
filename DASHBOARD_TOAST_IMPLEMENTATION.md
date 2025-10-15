@@ -13,19 +13,11 @@ This document describes the implementation of toast notifications for the admin 
 #### Added Imports
 ```tsx
 import { Button } from '@/components/ui/button';
-import { useFlashMessages } from '@/hooks/use-flash-messages';
 import { toast } from 'sonner';
 ```
 
 #### Hook Integration
-```tsx
-export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
-    // Enable automatic flash message toasts
-    useFlashMessages();
-    
-    // ... rest of component
-}
-```
+**Note**: The dashboard uses `AppLayout` which wraps `app-sidebar-layout.tsx`. This layout already calls `useFlashMessages()`, so we don't need to call it again in the dashboard component to avoid duplicate toasts.
 
 #### Demo Section
 Added a comprehensive toast demo section with two subsections:

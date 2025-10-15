@@ -9,8 +9,8 @@ Successfully implemented toast notifications for the admin dashboard with compre
 ### 1. Frontend Changes
 **File**: `resources/js/pages/admin/dashboard.tsx`
 
-- ✅ Added `useFlashMessages()` hook for automatic toast display from backend
-- ✅ Imported required dependencies (toast, Button, useFlashMessages)
+- ✅ Flash messages automatically displayed via `AppLayout` (no duplicate hook calls)
+- ✅ Imported required dependencies (toast, Button)
 - ✅ Created comprehensive demo section with two subsections:
   - **Manual Toasts Section**: 6 interactive buttons
     - Success Toast (green)

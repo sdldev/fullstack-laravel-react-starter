@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useFlashMessages } from '@/hooks/use-flash-messages';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { Activity, Settings, TrendingUp, Users } from 'lucide-react';
@@ -14,8 +13,7 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
-    // Enable automatic flash message toasts
-    useFlashMessages();
+    // Note: useFlashMessages() is already called in AppLayout (app-sidebar-layout)
 
     const stats = [
         {
