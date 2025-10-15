@@ -79,6 +79,21 @@ export default function EditUserModal({
 
     useEffect(() => {
         if (user && isOpen) {
+            // Helper: extract YYYY-MM-DD from various possible date/time formats
+            const extractDate = (raw: string | null | undefined) => {
+                if (!raw) return new Date().toISOString().split('T')[0];
+                // Prefer explicit YYYY-MM-DD if present
+                const match = raw.match(/\d{4}-\d{2}-\d{2}/);
+                if (match) return match[0];
+                // Fallback: try Date parse and format to YYYY-MM-DD
+                const d = new Date(raw);
+                if (!isNaN(d.getTime())) {
+                    return d.toISOString().split('T')[0];
+                }
+                // Last resort: empty string so input stays blank
+                return '';
+            };
+
             setData({
                 name: user.name,
                 email: user.email,
@@ -89,8 +104,7 @@ export default function EditUserModal({
                 full_name: user.full_name || '',
                 phone: user.phone || '',
                 address: user.address || '',
-                join_date:
-                    user.join_date || new Date().toISOString().split('T')[0],
+                join_date: extractDate(user.join_date),
                 note: user.note || '',
                 is_active: user.is_active,
             });
@@ -103,6 +117,7 @@ export default function EditUserModal({
 
         put(`/admin/users/${user.id}`, {
             onSuccess: () => {
+                toast.success('User berhasil diperbarui!');
                 reset();
                 onClose();
             },

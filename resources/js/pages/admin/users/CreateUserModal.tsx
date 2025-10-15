@@ -65,6 +65,7 @@ export default function CreateUserModal({
         e.preventDefault();
         post('/admin/users', {
             onSuccess: () => {
+                toast.success('User berhasil dibuat!');
                 reset();
                 onClose();
             },
@@ -215,7 +216,9 @@ export default function CreateUserModal({
 
                         {/* Member Number */}
                         <div className="space-y-2">
-                            <Label htmlFor="member_number">Member Number *</Label>
+                            <Label htmlFor="member_number">
+                                Member Number *
+                            </Label>
                             <Input
                                 id="member_number"
                                 value={data.member_number}

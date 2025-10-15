@@ -44,6 +44,7 @@ export default function DeleteUserModal({
         setIsDeleting(true);
         router.delete(`/admin/users/${user.id}`, {
             onSuccess: () => {
+                toast.success('User berhasil dihapus!');
                 setIsDeleting(false);
                 onClose();
             },

@@ -3,8 +3,6 @@ import '../../css/app.css';
 import { Toaster } from '@/components/ui/sonner';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ThemeProvider } from 'next-themes';
-import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { initializeTheme } from '../hooks/use-appearance';
 import { initializeThemeCustomization } from '../hooks/use-theme-customization';
@@ -26,7 +24,7 @@ createInertiaApp({
         root.render(
             <>
                 <App {...props} />
-                <Toaster />
+                <Toaster richColors position="bottom-center" />
             </>,
         );
     },

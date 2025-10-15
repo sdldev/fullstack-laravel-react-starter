@@ -209,7 +209,7 @@ export default function ShowUserModal({
                                                 <span className="text-sm font-medium text-muted-foreground">
                                                     Note:
                                                 </span>
-                                                <p className="text-sm bg-muted p-3 rounded-md">
+                                                <p className="rounded-md bg-muted p-3 text-sm">
                                                     {user.note}
                                                 </p>
                                             </div>
