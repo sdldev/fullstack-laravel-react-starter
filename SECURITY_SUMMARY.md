@@ -11,7 +11,7 @@
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                  SECURITY SCORE: 65/100                 │
-│                  Status: NEEDS IMPROVEMENT              │
+│           Status: ⚠️  NEEDS IMPROVEMENT                │
 └─────────────────────────────────────────────────────────┘
 
  🔴 Critical Issues: 2
