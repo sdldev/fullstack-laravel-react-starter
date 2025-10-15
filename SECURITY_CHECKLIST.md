@@ -9,48 +9,47 @@
   - [ ] No hardcoded passwords in code
   - [ ] Admin default password set via environment variable
 
-- [ ] **Filter Sensitive Data in Frontend**
-  - [ ] User object in Inertia props only exposes safe fields
-  - [ ] Password hash not exposed
-  - [ ] Two-factor secret not exposed
-  - [ ] Recovery codes not exposed
-  - [ ] Remember token not exposed
+- [x] **Filter Sensitive Data in Frontend**
+  - [x] User object in Inertia props only exposes safe fields (implemented)
+  - [x] Password hash not exposed
+  - [x] Two-factor secret not exposed
+  - [x] Recovery codes not exposed
+  - [x] Remember token not exposed
 
 ### 🟠 HIGH Priority
 
-- [ ] **File Upload Security**
-  - [ ] MIME type validation implemented
-  - [ ] File content validation (read/parse actual file)
-  - [ ] Image re-encoding to strip malicious code
-  - [ ] Secure filename generation (random, unpredictable)
-  - [ ] File size limits enforced
-  - [ ] Secure file deletion with path validation
+- [x] **File Upload Security**
+  - [x] MIME type validation implemented (ImageUploadService)
+  - [x] File content validation (Intervention Image read)
+  - [x] Image re-encoding to strip metadata / re-encode
+  - [x] Secure filename generation (random, unpredictable)
+  - [x] File size limits enforced (2MB default)
+  - [x] Secure file deletion with path validation
 
-- [ ] **HTTPS Configuration**
-  - [ ] HTTPS enforced in production
-  - [ ] `APP_URL` uses https:// in production
-  - [ ] `SESSION_SECURE_COOKIE=true`
-  - [ ] HSTS header enabled
+- [x] **HTTPS Configuration**
+  - [x] HTTPS enforced in production (AppServiceProvider forces scheme)
+  - [ ] `APP_URL` uses https:// in production (check env)
+  - [ ] `SESSION_SECURE_COOKIE=true` (verify .env)
+  - [x] HSTS header enabled via SecurityHeaders middleware (production only)
 
-- [ ] **Security Headers**
-  - [ ] `X-Frame-Options: SAMEORIGIN`
-  - [ ] `X-Content-Type-Options: nosniff`
-  - [ ] `X-XSS-Protection: 1; mode=block`
-  - [ ] `Strict-Transport-Security` (HSTS)
-  - [ ] `Referrer-Policy`
-  - [ ] Content Security Policy (CSP)
+- [x] **Security Headers**
+  - [x] `X-Frame-Options: SAMEORIGIN` (SecurityHeaders middleware)
+  - [x] `X-Content-Type-Options: nosniff`
+  - [x] `X-XSS-Protection: 1; mode=block`
+  - [x] `Strict-Transport-Security` (HSTS, production only)
+  - [x] `Referrer-Policy`
+  - [ ] Content Security Policy (CSP) — not yet configured, recommended to use spatie/laravel-csp
 
-- [ ] **Authorization**
-  - [ ] All admin routes protected with middleware
-  - [ ] Gate/Policy checks implemented
+- [x] **Authorization (partial)**
+  - [x] All admin routes protected with middleware (`auth`, `verified`, `can:admin`) — see `routes/admin.php`
+  - [x] Gate implemented for `admin` role (AppServiceProvider) — consider adding Policies for resources
   - [ ] Authorization tests written
-  - [ ] No role-based vulnerabilities
+  - [ ] No role-based vulnerabilities (manual review recommended)
 
-- [ ] **Security Logging**
-  - [ ] Failed login attempts logged
-  - [ ] Account lockouts logged
-  - [ ] Unauthorized access logged
-  - [ ] Security log retention configured (90 days)
+- [x] **Security Logging (skeleton implemented)**
+  - [x] SecurityLogger service added (logs to `security` channel) — file exists at `app/Services/SecurityLogger.php`
+  - [ ] Integrate logging into auth flow (LoginRequest) and other places
+  - [ ] Configure `security` channel retention (config/logging.php). NOTE: `config/logging.php` currently does not include a `security` channel and should be updated.
 
 ### 🟡 MEDIUM Priority
 
@@ -67,14 +66,14 @@
   - [ ] 2FA throttling: 5 attempts/min
   - [ ] API rate limiting (if applicable)
 
-- [ ] **Activity Logging**
-  - [ ] Spatie Activity Log configured
-  - [ ] User CRUD operations logged
-  - [ ] Sensitive data access logged
-  - [ ] Log retention policy defined
+- [x] **Activity Logging (scaffold added)**
+  - [x] Spatie Activity Log trait added to `User` model (scaffold) and `spatie/laravel-activitylog` appears in `composer.json`
+  - [ ] Publish migrations & run `php artisan vendor:publish --tag=activitylog-migrations` and `php artisan migrate`
+  - [ ] Configure retention & channels in `config/activitylog.php`
+  - [ ] Verify activity logging works end-to-end after migrations
 
 - [ ] **Data Exposure Prevention**
-  - [ ] Pagination data filtered before sending to frontend
+  - [ ] Pagination data filtered before sending to frontend (user lists may include full model attributes; consider resource transformers)
   - [ ] API responses don't include internal data
   - [ ] Error messages don't leak system info
 
