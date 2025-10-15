@@ -1,221 +1,161 @@
 <?php
 
-namespace Tests\Feature\Security;
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
-class SecurityTest extends TestCase
-{
-    use RefreshDatabase;
+uses(RefreshDatabase::class)->in('Feature');
 
-    /** @test */
-    public function it_includes_security_headers()
-    {
-        $response = $this->get('/');
+test('it includes security headers', function () {
+    $response = $this->get('/');
 
-        $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
-        $response->assertHeader('X-Content-Type-Options', 'nosniff');
-        $response->assertHeader('X-XSS-Protection', '1; mode=block');
-        $response->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    }
+    $response->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+    $response->assertHeader('X-Content-Type-Options', 'nosniff');
+    $response->assertHeader('X-XSS-Protection', '1; mode=block');
+    $response->assertHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+});
 
-    /** @test */
-    public function it_does_not_expose_sensitive_user_data_in_props()
-    {
-        $user = User::factory()->create([
-            'password' => bcrypt('secret-password'),
-            'two_factor_secret' => 'secret-2fa-key',
-        ]);
+test('it does not expose sensitive user data in props', function () {
+    // make this an admin so we receive the admin Inertia page
+    $user = User::factory()->create([
+        'password' => bcrypt('secret-password'),
+        'two_factor_secret' => 'secret-2fa-key',
+        'role' => 'admin',
+    ]);
 
-        $this->actingAs($user);
+    $this->actingAs($user);
 
-        $response = $this->get('/admin/dashboard');
+    $response = $this->get('/admin/dashboard');
 
-        // Get Inertia props
-        $props = $response->viewData('page')['props'];
+    $props = $response->viewData('page')['props'];
 
-        // Should have user data
-        $this->assertArrayHasKey('auth', $props);
-        $this->assertArrayHasKey('user', $props['auth']);
+    expect($props)->toHaveKey('auth');
+    expect($props['auth'])->toHaveKey('user');
 
-        // Should NOT expose sensitive fields
-        $userData = $props['auth']['user'];
-        $this->assertArrayNotHasKey('password', $userData);
-        $this->assertArrayNotHasKey('two_factor_secret', $userData);
-        $this->assertArrayNotHasKey('two_factor_recovery_codes', $userData);
-        $this->assertArrayNotHasKey('remember_token', $userData);
-        
-        // Should only have safe fields
-        $this->assertArrayHasKey('id', $userData);
-        $this->assertArrayHasKey('name', $userData);
-        $this->assertArrayHasKey('email', $userData);
-        $this->assertArrayHasKey('role', $userData);
-    }
+    $userData = $props['auth']['user'];
+    expect($userData)->not->toHaveKey('password');
+    expect($userData)->not->toHaveKey('two_factor_secret');
+    expect($userData)->not->toHaveKey('two_factor_recovery_codes');
+    expect($userData)->not->toHaveKey('remember_token');
 
-    /** @test */
-    public function it_prevents_admin_access_for_non_admin_users()
-    {
-        $user = User::factory()->create(['role' => 'user']);
+    expect($userData)->toHaveKeys(['id', 'name', 'email', 'role']);
+});
 
-        $this->actingAs($user);
+test('it prevents admin access for non-admin users', function () {
+    $user = User::factory()->create(['role' => 'user']);
 
-        $response = $this->get('/admin/dashboard');
+    $this->actingAs($user);
 
-        $response->assertForbidden();
-    }
+    $response = $this->get('/admin/dashboard');
 
-    /** @test */
-    public function it_allows_admin_access_for_admin_users()
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
+    $response->assertForbidden();
+});
 
-        $this->actingAs($admin);
+test('it allows admin access for admin users', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
 
-        $response = $this->get('/admin/dashboard');
+    $this->actingAs($admin);
 
-        $response->assertOk();
-    }
+    $response = $this->get('/admin/dashboard');
 
-    /** @test */
-    public function it_rate_limits_login_attempts()
-    {
-        // Try to login 6 times with wrong credentials
-        for ($i = 0; $i < 6; $i++) {
-            $response = $this->post('/login', [
-                'email' => 'test@example.com',
-                'password' => 'wrong-password',
-            ]);
-        }
+    $response->assertOk();
+});
 
-        // 6th attempt should be rate limited
-        $response->assertSessionHasErrors(['email']);
-        $errors = session('errors');
-        $emailError = $errors->get('email')[0] ?? '';
-        
-        $this->assertTrue(
-            str_contains($emailError, 'Too many') || str_contains($emailError, 'throttle'),
-            'Should show rate limit message. Got: '.$emailError
-        );
-    }
-
-    /** @test */
-    public function it_prevents_user_from_deleting_themselves()
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin);
-
-        $response = $this->delete("/admin/users/{$admin->id}");
-
-        $response->assertForbidden();
-        $this->assertDatabaseHas('users', ['id' => $admin->id]);
-    }
-
-    /** @test */
-    public function it_requires_authentication_for_admin_routes()
-    {
-        $response = $this->get('/admin/dashboard');
-
-        $response->assertRedirect('/login');
-    }
-
-    /** @test */
-    public function it_hashes_passwords_securely()
-    {
-        $user = User::factory()->create([
-            'password' => 'test-password',
-        ]);
-
-        // Password should be hashed, not plaintext
-        $this->assertNotEquals('test-password', $user->password);
-        
-        // Should be bcrypt hash (starts with $2y$)
-        $this->assertTrue(
-            str_starts_with($user->password, '$2y$'),
-            'Password should be bcrypt hashed'
-        );
-    }
-
-    /** @test */
-    public function it_prevents_sql_injection_in_user_search()
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin);
-
-        // Try SQL injection
-        $response = $this->get('/admin/users?search=\' OR 1=1--');
-
-        // Should not cause SQL error (Eloquent protects us)
-        $response->assertOk();
-    }
-
-    /** @test */
-    public function it_validates_file_upload_type()
-    {
-        $admin = User::factory()->create(['role' => 'admin']);
-        $this->actingAs($admin);
-
-        // Try to upload non-image file
-        $file = \Illuminate\Http\UploadedFile::fake()->create('malicious.php', 100);
-
-        $response = $this->post('/admin/users', [
-            'name' => 'Test User',
+test('it rate limits login attempts', function () {
+    for ($i = 0; $i < 6; $i++) {
+        $response = $this->post('/login', [
             'email' => 'test@example.com',
-            'password' => 'Password123!',
-            'password_confirmation' => 'Password123!',
-            'role' => 'user',
-            'member_number' => 'M9999',
-            'full_name' => 'Test User',
-            'address' => 'Test Address',
-            'phone' => '1234567890',
-            'image' => $file,
+            'password' => 'wrong-password',
         ]);
-
-        $response->assertSessionHasErrors(['image']);
     }
 
-    /** @test */
-    public function it_enforces_https_urls_in_production()
-    {
-        // Save original environment
-        $originalEnv = app()->environment();
-        
-        // Set to production
-        app()->detectEnvironment(function () {
-            return 'production';
-        });
+    $response->assertSessionHasErrors(['email']);
+    $errors = session('errors');
+    $emailError = $errors->get('email')[0] ?? '';
 
-        // Force HTTPS is handled in AppServiceProvider
-        // We can test that URL generation respects this
-        $url = url('/');
-        
-        // In production, should start with https (if AppServiceProvider is working)
-        // This test might need adjustment based on environment
-        $this->assertTrue(
-            str_starts_with($url, 'http://') || str_starts_with($url, 'https://'),
-            'URL should have http or https scheme'
-        );
-        
-        // Restore environment
-        app()->detectEnvironment(function () use ($originalEnv) {
-            return $originalEnv;
-        });
-    }
+    expect(str_contains($emailError, 'Too many') || str_contains($emailError, 'throttle'))->toBeTrue();
+});
 
-    /** @test */
-    public function it_hides_password_field_in_user_model()
-    {
-        $user = User::factory()->create([
-            'password' => 'secret',
-        ]);
+test('it prevents user from deleting themselves', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
 
-        // Convert to array (as would be sent to frontend)
-        $userArray = $user->toArray();
+    $response = $this->delete("/admin/users/{$admin->id}");
 
-        $this->assertArrayNotHasKey('password', $userArray);
-        $this->assertArrayNotHasKey('two_factor_secret', $userArray);
-        $this->assertArrayNotHasKey('two_factor_recovery_codes', $userArray);
-        $this->assertArrayNotHasKey('remember_token', $userArray);
-    }
-}
+    $response->assertForbidden();
+    $this->assertDatabaseHas('users', ['id' => $admin->id]);
+});
+
+test('it requires authentication for admin routes', function () {
+    $response = $this->get('/admin/dashboard');
+
+    $response->assertRedirect('/login');
+});
+
+test('it hashes passwords securely', function () {
+    $user = User::factory()->create([
+        'password' => 'test-password',
+    ]);
+
+    expect($user->password)->not->toBe('test-password');
+    expect(str_starts_with($user->password, '$2y$'))->toBeTrue();
+});
+
+test('it prevents sql injection in user search', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $response = $this->get('/admin/users?search=\' OR 1=1--');
+
+    $response->assertOk();
+});
+
+test('it validates file upload type', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $this->actingAs($admin);
+
+    $file = \Illuminate\Http\UploadedFile::fake()->create('malicious.php', 100);
+
+    $response = $this->post('/admin/users', [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'Password123!',
+        'password_confirmation' => 'Password123!',
+        'role' => 'user',
+        'member_number' => 'M9999',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '1234567890',
+        'image' => $file,
+    ]);
+
+    $response->assertSessionHasErrors(['image']);
+});
+
+test('it enforces https urls in production', function () {
+    $originalEnv = app()->environment();
+
+    app()->detectEnvironment(function () {
+        return 'production';
+    });
+
+    $url = url('/');
+
+    expect(str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))->toBeTrue();
+
+    app()->detectEnvironment(function () use ($originalEnv) {
+        return $originalEnv;
+    });
+});
+
+test('it hides password field in user model', function () {
+    $user = User::factory()->create([
+        'password' => 'secret',
+    ]);
+
+    $userArray = $user->toArray();
+
+    expect($userArray)->not->toHaveKey('password');
+    expect($userArray)->not->toHaveKey('two_factor_secret');
+    expect($userArray)->not->toHaveKey('two_factor_recovery_codes');
+    expect($userArray)->not->toHaveKey('remember_token');
+});
