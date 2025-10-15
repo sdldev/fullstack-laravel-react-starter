@@ -1,7 +1,10 @@
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useFlashMessages } from '@/hooks/use-flash-messages';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
 import { Activity, Settings, TrendingUp, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AdminDashboardProps {
     breadcrumbs: Array<{
@@ -11,6 +14,9 @@ interface AdminDashboardProps {
 }
 
 export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
+    // Enable automatic flash message toasts
+    useFlashMessages();
+
     const stats = [
         {
             title: 'Total Users',
@@ -88,6 +94,131 @@ export default function AdminDashboard({ breadcrumbs }: AdminDashboardProps) {
                         </Card>
                     ))}
                 </div>
+
+                {/* Toast Demo Section */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Toast Notifications Demo</CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                            Test different types of toast notifications
+                        </p>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        {/* Manual Toast Triggers */}
+                        <div>
+                            <h3 className="mb-3 text-sm font-semibold">
+                                Manual Toasts (Frontend)
+                            </h3>
+                            <div className="flex flex-wrap gap-3">
+                                <Button
+                                    onClick={() =>
+                                        toast.success(
+                                            'Operation completed successfully!',
+                                        )
+                                    }
+                                    variant="default"
+                                >
+                                    Success Toast
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        toast.error('An error occurred!')
+                                    }
+                                    variant="destructive"
+                                >
+                                    Error Toast
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        toast.info('Here is some information')
+                                    }
+                                    variant="secondary"
+                                >
+                                    Info Toast
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        toast.warning('Please be careful!')
+                                    }
+                                    variant="outline"
+                                >
+                                    Warning Toast
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        toast.loading('Processing...')
+                                    }
+                                    variant="outline"
+                                >
+                                    Loading Toast
+                                </Button>
+                                <Button
+                                    onClick={() => {
+                                        const promise = new Promise((resolve) =>
+                                            setTimeout(
+                                                () => resolve('Done'),
+                                                2000,
+                                            ),
+                                        );
+                                        toast.promise(promise, {
+                                            loading: 'Processing...',
+                                            success: 'Operation completed!',
+                                            error: 'Operation failed!',
+                                        });
+                                    }}
+                                    variant="outline"
+                                >
+                                    Promise Toast
+                                </Button>
+                            </div>
+                        </div>
+
+                        {/* Flash Message Triggers */}
+                        <div>
+                            <h3 className="mb-3 text-sm font-semibold">
+                                Flash Messages (Backend Redirect)
+                            </h3>
+                            <div className="flex flex-wrap gap-3">
+                                <Button
+                                    onClick={() =>
+                                        (window.location.href =
+                                            '/admin/dashboard?demo_flash=success')
+                                    }
+                                    variant="default"
+                                >
+                                    Flash Success
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        (window.location.href =
+                                            '/admin/dashboard?demo_flash=error')
+                                    }
+                                    variant="destructive"
+                                >
+                                    Flash Error
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        (window.location.href =
+                                            '/admin/dashboard?demo_flash=info')
+                                    }
+                                    variant="secondary"
+                                >
+                                    Flash Info
+                                </Button>
+                                <Button
+                                    onClick={() =>
+                                        (window.location.href =
+                                            '/admin/dashboard?demo_flash=warning')
+                                    }
+                                    variant="outline"
+                                >
+                                    Flash Warning
+                                </Button>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
                     <Card className="col-span-4">
