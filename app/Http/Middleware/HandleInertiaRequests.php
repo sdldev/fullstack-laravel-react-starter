@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -38,6 +39,21 @@ class HandleInertiaRequests extends Middleware
     {
         [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
 
+        $flashMessages = [
+            'success' => $request->session()->get('success'),
+            'error' => $request->session()->get('error'),
+            'info' => $request->session()->get('info'),
+            'warning' => $request->session()->get('warning'),
+        ];
+
+        $hasFlash = collect($flashMessages)
+            ->filter(fn ($value) => filled($value))
+            ->isNotEmpty();
+
+        if ($hasFlash) {
+            $flashMessages['uuid'] = (string) Str::uuid();
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -46,12 +62,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            'flash' => [
-                'success' => $request->session()->get('success'),
-                'error' => $request->session()->get('error'),
-                'info' => $request->session()->get('info'),
-                'warning' => $request->session()->get('warning'),
-            ],
+            'flash' => $hasFlash ? $flashMessages : null,
         ];
     }
 }
