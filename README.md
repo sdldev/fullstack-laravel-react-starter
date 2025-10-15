@@ -55,6 +55,7 @@ Sebuah starter kit fullstack modern yang menggabungkan Laravel 12, React 19, dan
 - **Type Safety** - Full TypeScript support
 - **Code Quality** - ESLint, Prettier, PHP CS Fixer (Pint)
 - **Testing** - Pest PHP untuk backend testing
+- **Toast Notifications** - Sonner integration untuk user feedback
 
 ## 📦 Integrasi Package
 
@@ -74,6 +75,7 @@ Sebuah starter kit fullstack modern yang menggabungkan Laravel 12, React 19, dan
 - `lucide-react` - Beautiful icon library
 - `class-variance-authority` - Utility untuk component variants
 - `tailwind-merge` - Merge Tailwind classes dengan smart
+- `sonner` - Toast notification library untuk user feedback
 
 ## 🚀 Quick Start
 
@@ -219,6 +221,54 @@ Menggunakan **shadcn/ui** untuk component library yang:
 - `UserMenu` - User dropdown dengan profile actions
 - `Breadcrumbs` - Navigation breadcrumbs
 - `ThemeToggle` - Dark/light mode switcher
+- `Toaster` - Toast notifications untuk feedback (Sonner)
+
+## 🎉 Toast Notifications
+
+Project ini menggunakan **[Sonner](https://sonner.emilkowal.ski/)** untuk toast notifications yang elegant dan accessible.
+
+### Fitur Toast
+- ✅ Manual toasts (frontend triggers)
+- ✅ Automatic flash messages (backend redirects)
+- ✅ 6 tipe notifikasi: success, error, info, warning, loading, promise
+- ✅ Auto-dismiss dengan configurable duration
+- ✅ Dark mode support
+- ✅ Stack multiple toasts
+- ✅ Keyboard accessible (ESC to dismiss)
+
+### Quick Usage
+
+**Manual Toast** (Frontend):
+```tsx
+import { toast } from 'sonner';
+
+toast.success('Operation completed!');
+toast.error('An error occurred!');
+toast.info('Here is some information');
+toast.warning('Please be careful!');
+```
+
+**Flash Message** (Backend):
+```php
+return redirect()->route('admin.dashboard')
+    ->with('success', 'User created successfully!');
+```
+
+**Enable Auto-Toasts** (Any Page):
+```tsx
+import { useFlashMessages } from '@/hooks/use-flash-messages';
+
+export default function MyPage() {
+    useFlashMessages(); // Add this line
+    // ...
+}
+```
+
+### Dokumentasi Toast
+- **[TOASTER_USAGE.md](TOASTER_USAGE.md)** - Comprehensive usage guide
+- **[DASHBOARD_TOAST_IMPLEMENTATION.md](DASHBOARD_TOAST_IMPLEMENTATION.md)** - Implementation details untuk dashboard
+- **[DASHBOARD_TOAST_VISUAL.md](DASHBOARD_TOAST_VISUAL.md)** - Visual guide dan examples
+- **Demo**: Lihat `/admin/dashboard` untuk live demo
 
 ## 🔧 Kustomisasi
 
