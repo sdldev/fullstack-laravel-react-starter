@@ -339,7 +339,7 @@ if ($imagePath && str_starts_with($imagePath, $allowedPath)) {
 ],
 ```
 
-**Risiko**: Semua user data (including hidden fields?) exposed ke JavaScript
+**Risiko**: Semua user data, termasuk hidden fields, diekspos ke JavaScript
 
 **Dampak**: 🔴 **CRITICAL**
 
