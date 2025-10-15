@@ -172,12 +172,31 @@ class ImageUploadService
             $image->scale(width: $maxWidth);
         }
 
-        // 5. Generate secure filename
-        $filename = Str::random(40) . '.jpg';
+        // 5. Generate secure filename with correct extension
+        $mimeToExt = [
+            'image/jpeg' => 'jpg',
+            'image/jpg'  => 'jpg',
+            'image/png'  => 'png',
+            'image/gif'  => 'gif',
+        ];
+        $originalMime = $file->getMimeType();
+        $ext = $mimeToExt[$originalMime] ?? 'jpg';
+        $filename = Str::random(40) . '.' . $ext;
         $path = $directory . '/' . $filename;
 
-        // 6. Save dengan format yang diketahui aman (JPEG)
-        $encoded = $image->encodeByMediaType('image/jpeg', quality: 85);
+        // 6. Save dengan format yang sesuai dengan original (preserve transparency if possible)
+        switch ($ext) {
+            case 'png':
+                $encoded = $image->encodeByMediaType('image/png');
+                break;
+            case 'gif':
+                $encoded = $image->encodeByMediaType('image/gif');
+                break;
+            case 'jpg':
+            default:
+                $encoded = $image->encodeByMediaType('image/jpeg', quality: 85);
+                break;
+        }
         Storage::disk('public')->put($path, $encoded);
 
         return $path;
