@@ -23,21 +23,9 @@ User::create([
 ```php
 User::create([
     'email' => 'admin@admin.com',
-    'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD', Str::random(16))),
-    // ...
+    'password' => Hash::make(env('ADMIN_DEFAULT_PASSWORD')), // No fallback, must be set
+    'must_change_password' => true, // Force password reset on first login
 ]);
-```
-
-**Environment Setup**:
-```env
-# .env.local (development only)
-ADMIN_DEFAULT_PASSWORD=your-strong-password-here
-
-# .env.production
-# DO NOT set this - will use random password
-# Force admin to reset password via email
-```
-
 **Additional**: Add forced password reset untuk first login:
 ```php
 // Add to users table migration
