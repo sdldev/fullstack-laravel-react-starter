@@ -6,7 +6,7 @@ Jika Anda menemukan kerentanan keamanan dalam aplikasi ini, mohon **JANGAN** mem
 
 ### Cara Melaporkan
 
-1. **Email**: Kirim laporan ke [security@yourdomain.com](mailto:security@yourdomain.com)
+1. **Email**: Kirim laporan ke [indatechnologi@gmail.com](mailto:indatechnologi@gmail.com)
 2. **GitHub Security Advisory**: Gunakan [GitHub Security Advisory](https://github.com/sdldev/fullstack-laravel-react-starter/security/advisories/new)
 3. **Private Message**: Contact maintainer via direct message
 
@@ -157,7 +157,7 @@ npm audit --audit-level=high
 
 ### Maintainers
 
-- **Security Lead**: [Your Name](mailto:security@yourdomain.com)
+- **Security Lead**: [Your Name](mailto:indatechnologi@gmail.com)
 - **Project Lead**: [Project Lead](mailto:lead@yourdomain.com)
 
 ### Resources
@@ -207,4 +207,4 @@ Kami mengharapkan pelapor untuk:
 **Last Updated**: October 14, 2025  
 **Policy Version**: 1.0
 
-For questions about this security policy, contact: [security@yourdomain.com](mailto:security@yourdomain.com)
+For questions about this security policy, contact: [indatechnologi@gmail.com](mailto:indatechnologi@gmail.com)
