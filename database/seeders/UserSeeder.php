@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
     {
         // SECURITY: Admin password MUST be set via environment variable
         $adminPassword = env('ADMIN_DEFAULT_PASSWORD');
-        
+
         if (! $adminPassword) {
             // In development, generate a random password and display it
             if (app()->environment('local', 'development')) {
@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                 $this->command->warn('=================================================');
                 $this->command->warn('ADMIN_DEFAULT_PASSWORD not set in .env');
                 $this->command->warn('Generated temporary admin password:');
-                $this->command->info("Email: admin@admin.com");
+                $this->command->info('Email: admin@admin.com');
                 $this->command->info("Password: {$adminPassword}");
                 $this->command->warn('For production, set ADMIN_DEFAULT_PASSWORD in .env');
                 $this->command->warn('=================================================');
@@ -54,7 +54,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Create 40 regular users with random passwords
-        for ($i = 1; $i <= 40; $i++) {
+        for ($i = 1; $i <= 5; $i++) {
             $faker = \Faker\Factory::create('id_ID');
             $genders = ['L', 'P'];
             $gender = $faker->randomElement($genders);
@@ -63,7 +63,7 @@ class UserSeeder extends Seeder
 
             // SECURITY: Generate random password for each user
             $userPassword = Str::random(16);
-            
+
             // In development, show generated passwords
             if (app()->environment('local', 'development') && $i <= 5) {
                 // Only show first 5 to avoid cluttering output
