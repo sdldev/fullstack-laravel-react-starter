@@ -4,11 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class UserController extends Controller
 {
+    public function __construct(private ImageUploadService $imageService) {}
+
     public function index(Request $request)
     {
         $perPage = $request->get('per_page', 10);
@@ -29,14 +32,22 @@ class UserController extends Controller
         $data['password'] = bcrypt($data['password']);
         $data['is_active'] = $data['is_active'] ?? true; // Auto-approve by default
 
-        // Handle image upload if provided
+        // Handle image upload with security
         if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('users', 'public');
+            try {
+                $data['image'] = $this->imageService->uploadSecure(
+                    $request->file('image'),
+                    'users',
+                    1000
+                );
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => $e->getMessage()]);
+            }
         }
 
         User::create($data);
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
     public function update(\App\Http\Requests\Admin\UpdateUserRequest $request, User $user)
@@ -50,18 +61,26 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        // Handle image upload if provided
+        // Handle image upload with security
         if ($request->hasFile('image')) {
-            // Delete old image if exists
-            if ($user->image && \Storage::disk('public')->exists($user->image)) {
-                \Storage::disk('public')->delete($user->image);
+            try {
+                if ($user->image) {
+                    $this->imageService->deleteSecure($user->image, 'users');
+                }
+
+                $data['image'] = $this->imageService->uploadSecure(
+                    $request->file('image'),
+                    'users',
+                    1000
+                );
+            } catch (\Exception $e) {
+                return back()->withErrors(['image' => $e->getMessage()]);
             }
-            $data['image'] = $request->file('image')->store('users', 'public');
         }
 
         $user->update($data);
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
@@ -71,13 +90,13 @@ class UserController extends Controller
             abort(403, 'You cannot delete your own account.');
         }
 
-        // Delete image if exists
-        if ($user->image && \Storage::disk('public')->exists($user->image)) {
-            \Storage::disk('public')->delete($user->image);
+        // Delete image securely
+        if ($user->image) {
+            $this->imageService->deleteSecure($user->image, 'users');
         }
 
         $user->delete();
 
-        return redirect()->route('admin.users.index');
+        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
 }
