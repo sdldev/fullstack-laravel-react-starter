@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, TwoFactorAuthenticatable;
+    use HasFactory, LogsActivity, Notifiable, TwoFactorAuthenticatable;
 
     protected $fillable = [
         'name',
@@ -43,5 +45,23 @@ class User extends Authenticatable
             'join_date' => 'datetime',
             'is_active' => 'boolean',
         ];
+    }
+
+    /**
+     * Configure activity logging using Spatie
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'name',
+                'email',
+                'role',
+                'full_name',
+                'is_active',
+                'member_number',
+            ])
+            ->logOnlyDirty()
+            ->dontSubmitEmptyLogs();
     }
 }
