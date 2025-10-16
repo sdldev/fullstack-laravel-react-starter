@@ -13,7 +13,7 @@ import {
 import { dashboard } from '@/routes';
 import { type MainNavItem, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Cog, LayoutGrid, Users } from 'lucide-react';
+import { ArrowRight, Cog, LayoutGrid, Shield, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItem[] = [
@@ -49,6 +49,22 @@ const mainNavItems: MainNavItem[] = [
             {
                 title: 'Theme',
                 href: '/settings/appearance',
+                icon: ArrowRight,
+            },
+        ],
+    },
+    {
+        title: 'Security Logs',
+        icon: Shield,
+        subitem: [
+            {
+                title: 'Audit Logs',
+                href: '/admin/audit-logs',
+                icon: ArrowRight,
+            },
+            {
+                title: 'Security Logs',
+                href: '/admin/security-logs',
                 icon: ArrowRight,
             },
         ],
