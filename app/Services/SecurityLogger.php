@@ -89,4 +89,18 @@ class SecurityLogger
             'timestamp' => now()->toIso8601String(),
         ]);
     }
+
+    /**
+     * Log a successful logout
+     */
+    public function logSuccessfulLogout($user, Request $request): void
+    {
+        Log::channel('security')->info('Successful logout', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'timestamp' => now()->toIso8601String(),
+        ]);
+    }
 }

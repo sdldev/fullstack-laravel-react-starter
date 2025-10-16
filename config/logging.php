@@ -75,10 +75,11 @@ return [
 
         'security' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/security.log'),
+            'path' => storage_path('logs/security/security.log'),
             'level' => env('LOG_LEVEL', 'info'),
-            'days' => 90, // Keep security logs for 90 days
+            'days' => 31, // Keep active logs for one month, older ones archived automatically
             'replace_placeholders' => true,
+            'permission' => 0644, // Readable by owner and group
         ],
 
         'slack' => [

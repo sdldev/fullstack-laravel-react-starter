@@ -53,7 +53,7 @@ class UserSeeder extends Seeder
             'note' => 'This is a super admin user',
         ]);
 
-        // Create 40 regular users with random passwords
+        // Create regular users with random passwords
         for ($i = 1; $i <= 5; $i++) {
             $faker = \Faker\Factory::create('id_ID');
             $genders = ['L', 'P'];
@@ -87,6 +87,6 @@ class UserSeeder extends Seeder
             ]);
         }
 
-        $this->command->info('✓ Seeded 1 admin user and 40 regular users with secure random passwords');
+        $this->command->info('✓ Seeded 1 admin user and regular users with secure random passwords');
     }
 }
