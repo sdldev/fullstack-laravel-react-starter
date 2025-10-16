@@ -4,12 +4,14 @@
 
 ### 🔴 CRITICAL (Must Fix)
 
-- [ ] **Remove/Change Default Passwords**
-  - [ ] Seeder passwords changed to strong random values
-  - [ ] No hardcoded passwords in code
-  - [ ] Admin default password set via environment variable
+- [x] **Remove/Change Default Passwords** ✅ FIXED
+  - [x] Seeder passwords changed to strong random values
+  - [x] No hardcoded passwords in code
+  - [x] Admin default password set via environment variable
+  - [x] Development mode displays generated passwords
+  - [x] Production mode throws exception if not configured
 
-- [x] **Filter Sensitive Data in Frontend**
+- [x] **Filter Sensitive Data in Frontend** ✅ COMPLETE
   - [x] User object in Inertia props only exposes safe fields (implemented)
   - [x] Password hash not exposed
   - [x] Two-factor secret not exposed
@@ -46,10 +48,13 @@
   - [ ] Authorization tests written
   - [ ] No role-based vulnerabilities (manual review recommended)
 
-- [x] **Security Logging (skeleton implemented)**
-  - [x] SecurityLogger service added (logs to `security` channel) — file exists at `app/Services/SecurityLogger.php`
-  - [ ] Integrate logging into auth flow (LoginRequest) and other places
-  - [ ] Configure `security` channel retention (config/logging.php). NOTE: `config/logging.php` currently does not include a `security` channel and should be updated.
+- [x] **Security Logging (Enhanced)** ✅ SERVICE IMPLEMENTED
+  - [x] SecurityLogger service added with comprehensive methods
+  - [x] Security log channel configured (config/logging.php)
+  - [x] Enhanced methods: logAccountLockout, logUnauthorizedAccess, logPrivilegeEscalation, logSensitiveDataAccess
+  - [ ] Integrate logging into auth flow (LoginRequest) — HIGH PRIORITY
+  - [ ] Integrate with logout events
+  - [ ] Integrate with password reset flow
 
 ### 🟡 MEDIUM Priority
 
@@ -66,11 +71,14 @@
   - [ ] 2FA throttling: 5 attempts/min
   - [ ] API rate limiting (if applicable)
 
-- [x] **Activity Logging (scaffold added)**
-  - [x] Spatie Activity Log trait added to `User` model (scaffold) and `spatie/laravel-activitylog` appears in `composer.json`
-  - [ ] Publish migrations & run `php artisan vendor:publish --tag=activitylog-migrations` and `php artisan migrate`
-  - [ ] Configure retention & channels in `config/activitylog.php`
-  - [ ] Verify activity logging works end-to-end after migrations
+- [x] **Activity Logging (Scaffold Ready)** ⏳ NEEDS CONFIGURATION
+  - [x] Spatie Activity Log package installed
+  - [x] LogsActivity trait added to User model
+  - [ ] Publish migrations: `php artisan vendor:publish --tag=activitylog-migrations` — HIGH PRIORITY
+  - [ ] Run migrations: `php artisan migrate`
+  - [ ] Configure retention in `config/activitylog.php`
+  - [ ] Add activity logging to critical admin actions
+  - [ ] Schedule cleanup: `Schedule::command('activitylog:clean')->daily()`
 
 - [ ] **Data Exposure Prevention**
   - [ ] Pagination data filtered before sending to frontend (user lists may include full model attributes; consider resource transformers)

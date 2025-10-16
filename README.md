@@ -270,14 +270,15 @@ interface SharedData {
 
 Semua dokumentasi tersimpan di folder `/docs` dengan struktur kategori:
 
-- **log-audit/** - Security logs & audit documentation
-- **scurity-audit/** - Security audit reports & checklists
-- **api/** - API endpoints & authentication (recommended)
-- **architecture/** - System design & patterns (recommended)
-- **guide/** - Developer guides & tutorials (recommended)
-- **troubleshooting/** - FAQ & common issues (recommended)
+- **security-audit/** - Comprehensive security audit & implementation guides
+- **architecture/** - System architecture, patterns & design decisions
+- **guides/** - Developer guides & tutorials (coming soon)
+- **api/** - API endpoints & authentication (coming soon)
 
-**Baca lebih lanjut**: Lihat [COPILOT_INSTRUCTIONS_SUMMARY.md](docs/COPILOT_INSTRUCTIONS_SUMMARY.md)
+**📖 Key Documentation**:
+- **[docs/architecture/OVERVIEW.md](docs/architecture/OVERVIEW.md)** - System architecture overview
+- **[docs/architecture/ADMIN_SITE_SEPARATION.md](docs/architecture/ADMIN_SITE_SEPARATION.md)** - Admin vs Site separation pattern
+- **[SECURITY_README.md](SECURITY_README.md)** - Security documentation hub
 
 ### GitHub Copilot Instructions
 
@@ -363,7 +364,7 @@ npx eslint .                                     # ESLint check
 
 ## 🔒 Security
 
-Aplikasi ini telah melalui analisis keamanan komprehensif sebanyak **2 kali** (Oktober 14 & 15, 2025).
+Aplikasi ini telah melalui comprehensive security audit (Oktober 16, 2025).
 
 ### 📊 Status Keamanan Terkini
 - **Security Score**: 80/100 ⚠️ (Target: 90/100 ✅)
@@ -375,17 +376,12 @@ Aplikasi ini telah melalui analisis keamanan komprehensif sebanyak **2 kali** (O
 
 **🎯 Mulai Di Sini**:
 - **[SECURITY_README.md](SECURITY_README.md)** - 📖 Navigation guide untuk semua dokumentasi keamanan
-- **[SECURITY_INDEX.md](SECURITY_INDEX.md)** - Index lengkap dokumentasi keamanan
+- **[SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md)** - Quick reference checklist
 
-**Audit Terkini (Oktober 15, 2025)**:
-- **[docs/scurity-audit/SECURITY_AUDIT_2025.md](docs/scurity-audit/SECURITY_AUDIT_2025.md)** - Audit terbaru dengan findings lengkap
-- **[docs/scurity-audit/SECURITY_FIXES_IMMEDIATE.md](docs/scurity-audit/SECURITY_FIXES_IMMEDIATE.md)** - Panduan implementasi fixes
-- **[docs/scurity-audit/SECURITY_CHECKLIST.md](docs/scurity-audit/SECURITY_CHECKLIST.md)** - Deployment checklist
-
-**Audit Pertama (Oktober 14, 2025)**:
-- **[docs/scurity-audit/SECURITY_ANALYSIS.md](docs/scurity-audit/SECURITY_ANALYSIS.md)** - Analisis kerentanan original
-- **[docs/scurity-audit/SECURITY_IMPROVEMENTS.md](docs/scurity-audit/SECURITY_IMPROVEMENTS.md)** - Panduan implementasi detail
-- **[docs/scurity-audit/SECURITY_SUMMARY.md](docs/scurity-audit/SECURITY_SUMMARY.md)** - Executive summary
+**Audit Komprehensif (Oktober 16, 2025)**:
+- **[docs/security-audit/SECURITY_AUDIT_CURRENT.md](docs/security-audit/SECURITY_AUDIT_CURRENT.md)** - Comprehensive security audit terkini
+- **[docs/security-audit/SECURITY_IMPLEMENTATION.md](docs/security-audit/SECURITY_IMPLEMENTATION.md)** - Step-by-step implementation guide
+- **[.github/SECURITY.md](.github/SECURITY.md)** - Security policy & vulnerability reporting
 
 ### 🛡️ Fitur Keamanan Built-in
 
@@ -402,26 +398,28 @@ Aplikasi ini telah melalui analisis keamanan komprehensif sebanyak **2 kali** (O
 
 Sebelum deploy ke production, **WAJIB** review dan implementasi:
 
-1. **Critical Issues**
-   - Change default passwords di seeder
-   - Filter sensitive data di Inertia props
+1. **Critical Issues** ✅
+   - ✅ Strong admin passwords implemented
+   - ✅ Sensitive data filtered in Inertia props
 
-2. **High Priority**
-   - Implement file content validation
-   - Enable HTTPS enforcement
-   - Add security headers
-   - Configure security logging
+2. **High Priority** (2-3 weeks)
+   - ⏳ Integrate SecurityLogger with authentication
+   - ⏳ Configure Activity Log migrations
+   - 🔄 Implement Content Security Policy
+   - 🔄 Add global rate limiting
 
-3. **Configuration**
+3. **Configuration Required**
    ```env
    APP_ENV=production
    APP_DEBUG=false
+   APP_URL=https://yourdomain.com
    SESSION_ENCRYPT=true
    SESSION_LIFETIME=30
    SESSION_SECURE_COOKIE=true
+   ADMIN_DEFAULT_PASSWORD=<strong-password-24-chars>
    ```
 
-Baca **[docs/scurity-audit/SECURITY_ANALYSIS.md](docs/scurity-audit/SECURITY_ANALYSIS.md)** untuk detail lengkap.
+Baca **[docs/security-audit/SECURITY_AUDIT_CURRENT.md](docs/security-audit/SECURITY_AUDIT_CURRENT.md)** untuk detail lengkap.
 
 ### 🔍 Security Audit & Code Quality
 
