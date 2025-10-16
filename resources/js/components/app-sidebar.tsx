@@ -13,7 +13,14 @@ import {
 import { dashboard } from '@/routes';
 import { type MainNavItem, type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { ArrowRight, Cog, LayoutGrid, Shield, Users } from 'lucide-react';
+import {
+    ArrowRight,
+    Cog,
+    LayoutGrid,
+    Shield,
+    Users,
+    Wrench,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItem[] = [
@@ -28,8 +35,13 @@ const mainNavItems: MainNavItem[] = [
         icon: Users,
     },
     {
-        title: 'Config',
+        title: 'App setting',
+        href: '/admin/settingsapp',
         icon: Cog,
+    },
+    {
+        title: 'Config',
+        icon: Wrench,
         subitem: [
             {
                 title: 'Profile',

@@ -18,6 +18,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(SecurityLogService::class, function ($app) {
             return new SecurityLogService;
         });
+
+        // Bind ImageService as singleton
+        $this->app->singleton(\App\Services\ImageService::class);
     }
 
     /**
@@ -31,7 +34,6 @@ class AppServiceProvider extends ServiceProvider
         }
 
         Gate::define('admin', function ($user) {
-            // return $user->role === 'admin';
             return auth()->check() && auth()->user()->role === 'admin';
         });
     }
