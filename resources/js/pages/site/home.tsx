@@ -1,3 +1,4 @@
+import AppLogo from '@/components/app-logo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,24 +8,34 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import {
     CheckCircle,
     Code2,
+    Facebook,
     Github,
+    Instagram,
     Palette,
     Settings,
     Shield,
     Sparkles,
     Users,
+    Youtube,
     Zap,
 } from 'lucide-react';
 
 export default function Home() {
-    const { auth } = usePage<SharedData>().props;
+    const { auth, setting } = usePage<SharedData>().props;
 
     return (
         <>
-            <Head title="Home - Fullstack Laravel React Starter">
+            <Head
+                title={
+                    setting?.nama_app ? `${setting.nama_app} - Home` : 'Home'
+                }
+            >
                 <meta
                     name="description"
-                    content="Modern fullstack starter kit dengan Laravel 12, React 19, dan Inertia.js. Pemisahan jelas antara admin panel dan public site."
+                    content={
+                        setting?.description ||
+                        'Modern fullstack starter kit...'
+                    }
                 />
             </Head>
 
@@ -34,12 +45,7 @@ export default function Home() {
                     <div className="mx-auto max-w-7xl px-6 lg:px-8">
                         <div className="flex h-16 items-center justify-between">
                             <div className="flex items-center space-x-3">
-                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-blue-600 to-purple-600">
-                                    <Code2 className="h-5 w-5 text-white" />
-                                </div>
-                                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-                                    Laravel React Starter
-                                </span>
+                                <AppLogo />
                             </div>
 
                             <div className="flex items-center space-x-4">
@@ -466,6 +472,81 @@ export default function Home() {
                                     </Button>
                                 </>
                             )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* Contact & Social Section */}
+                <section className="bg-white px-6 py-12 lg:px-8 dark:bg-slate-900">
+                    <div className="mx-auto grid max-w-4xl grid-cols-1 gap-8 md:grid-cols-2">
+                        <div>
+                            <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
+                                Contact Us
+                            </h3>
+                            {setting?.address && (
+                                <p className="mb-1 text-sm text-slate-600 dark:text-slate-400">
+                                    {setting.address}
+                                </p>
+                            )}
+                            {setting?.email && (
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                    Email:{' '}
+                                    <a
+                                        href={`mailto:${setting.email}`}
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        {setting.email}
+                                    </a>
+                                </p>
+                            )}
+                            {setting?.phone && (
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                    Phone:{' '}
+                                    <a
+                                        href={`tel:${setting.phone}`}
+                                        className="text-blue-600 hover:underline"
+                                    >
+                                        {setting.phone}
+                                    </a>
+                                </p>
+                            )}
+                        </div>
+                        <div>
+                            <h3 className="mb-2 text-lg font-semibold text-slate-900 dark:text-white">
+                                Follow Us
+                            </h3>
+                            <div className="flex space-x-4">
+                                {setting?.facebook && (
+                                    <a
+                                        href={setting.facebook}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-slate-600 hover:text-blue-600 dark:text-slate-400"
+                                    >
+                                        <Facebook className="h-6 w-6" />
+                                    </a>
+                                )}
+                                {setting?.instagram && (
+                                    <a
+                                        href={setting.instagram}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-slate-600 hover:text-pink-500 dark:text-slate-400"
+                                    >
+                                        <Instagram className="h-6 w-6" />
+                                    </a>
+                                )}
+                                {setting?.youtube && (
+                                    <a
+                                        href={setting.youtube}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-slate-600 hover:text-red-600 dark:text-slate-400"
+                                    >
+                                        <Youtube className="h-6 w-6" />
+                                    </a>
+                                )}
+                            </div>
                         </div>
                     </div>
                 </section>

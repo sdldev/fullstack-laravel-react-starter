@@ -40,6 +40,21 @@ export interface SharedData {
     quote: { message: string; author: string };
     auth: Auth;
     sidebarOpen: boolean;
+    /**
+     * Global application settings from SettingApp model
+     */
+    setting?: {
+        nama_app?: string;
+        description?: string;
+        address?: string;
+        email?: string;
+        phone?: string;
+        facebook?: string;
+        instagram?: string;
+        tiktok?: string;
+        youtube?: string;
+        image?: string;
+    };
     [key: string]: unknown;
 }
 
