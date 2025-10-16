@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Auth;
 
 use App\Models\User;
+use App\Services\SecurityLogger;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,14 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
+    /**
+     * Create a new login request instance.
+     */
+    public function __construct(private readonly SecurityLogger $securityLogger)
+    {
+        parent::__construct();
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -47,6 +56,9 @@ class LoginRequest extends FormRequest
         if (! $user || ! Auth::getProvider()->validateCredentials($user, $this->only('password'))) {
             RateLimiter::hit($this->throttleKey());
 
+            // Log failed login attempt
+            $this->securityLogger->logFailedLogin($this->input('email'), $this);
+
             throw ValidationException::withMessages([
                 'email' => __('auth.failed'),
             ]);
@@ -69,6 +81,9 @@ class LoginRequest extends FormRequest
         }
 
         event(new Lockout($this));
+
+        // Log account lockout
+        $this->securityLogger->logAccountLockout($this->input('email'), $this);
 
         $seconds = RateLimiter::availableIn($this->throttleKey());
 

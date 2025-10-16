@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\SecurityLogService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -13,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Bind SecurityLogService as singleton
+        $this->app->singleton(SecurityLogService::class, function ($app) {
+            return new SecurityLogService;
+        });
     }
 
     /**

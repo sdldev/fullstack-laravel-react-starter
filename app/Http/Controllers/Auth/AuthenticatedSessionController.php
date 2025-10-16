@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\SecurityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,11 @@ use Laravel\Fortify\Features;
 
 class AuthenticatedSessionController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(private readonly SecurityLogger $securityLogger) {}
+
     /**
      * Show the login page.
      */
@@ -43,6 +49,9 @@ class AuthenticatedSessionController extends Controller
 
         Auth::login($user, $request->boolean('remember'));
 
+        // Log successful login
+        $this->securityLogger->logSuccessfulLogin($user, $request);
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
@@ -53,6 +62,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        // Get the user before logging out
+        $user = $request->user();
+
+        if ($user) {
+            // Log successful logout
+            $this->securityLogger->logSuccessfulLogout($user, $request);
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
