@@ -53,8 +53,9 @@ Sebuah starter kit fullstack modern yang menggabungkan Laravel 12, React 19, dan
 - **Laravel Boost** - Enhanced development tools
 - **Hot Module Replacement** - Instant feedback saat development
 - **Type Safety** - Full TypeScript support
-- **Code Quality** - ESLint, Prettier, PHP CS Fixer (Pint)
+- **Code Quality** - PHPStan (Level 5), ESLint, Pint
 - **Testing** - Pest PHP untuk backend testing
+- **Static Analysis** - Strict type checking & linting
 
 ## 📦 Integrasi Package
 
@@ -134,16 +135,37 @@ npm run dev              # Start Vite dev server
 npm run build           # Build untuk production
 npm run build:ssr       # Build dengan SSR support
 
-# Code quality
-npm run lint            # ESLint
-npm run format          # Prettier formatting
+# Code quality & formatting
+npm run lint            # ESLint - TypeScript/React linting
+npm run format          # Prettier - Code formatting
 npm run types           # TypeScript type checking
+
+# Backend quality
+./vendor/bin/phpstan analyze --memory-limit=2G  # PHPStan - Type checking
+./vendor/bin/pint                                # Pint - PHP formatting
+./vendor/bin/pint --test                         # Test without fixing
 
 # Backend
 composer setup          # Full setup script
 php artisan serve       # Start Laravel server
-php artisan test        # Run tests
-./vendor/bin/pint       # Code formatting
+php artisan test        # Run tests (Pest)
+php artisan migrate     # Run database migrations
+```
+
+### Complete Code Quality Workflow
+
+```bash
+# Format PHP code with Pint
+./vendor/bin/pint
+
+# Type check PHP with PHPStan (Level 5)
+./vendor/bin/phpstan analyze --memory-limit=2G
+
+# Format & lint TypeScript/React with ESLint
+npx eslint . --fix
+
+# Run tests to ensure everything works
+./vendor/bin/pest --no-coverage
 ```
 
 ## 🏗️ Arsitektur
@@ -164,6 +186,36 @@ Project ini didesain dengan pemisahan yang jelas:
 - Landing page dan auth pages
 - SEO optimized
 
+### Code Organization & Standards
+
+Project ini mengikuti **strict coding standards** dengan:
+
+**📊 PHPStan (Level 5)** - Static type analysis
+- Strict type declarations
+- Type casting untuk semua variables
+- Nullable types & union types
+- No implicit any types
+
+**🎨 ESLint** - TypeScript/React linting
+- No explicit `any` types
+- Type-safe prop interfaces
+- Proper import organization
+- No unused variables
+
+**🔧 Pint** - PHP code formatting
+- PSR-12 compliance
+- Automatic import sorting
+- Constructor property promotion
+- Consistent spacing & indentation
+
+**Recommended Workflow**:
+```bash
+./vendor/bin/pint          # 1. Format PHP
+./vendor/bin/phpstan...    # 2. Type check PHP
+npx eslint . --fix         # 3. Format TS/React
+./vendor/bin/pest          # 4. Run tests
+```
+
 ### Struktur Directory
 
 ```
@@ -182,8 +234,17 @@ resources/js/
 
 routes/
 ├── web.php             # Public routes
+├── admin.php           # Admin routes
 ├── auth.php            # Authentication routes  
 └── settings.php        # Settings routes
+
+docs/                    # Project documentation
+├── log-audit/          # Logging & audit docs
+├── scurity-audit/      # Security audit docs
+├── api/                # API documentation (recommended)
+├── architecture/       # Architecture & design (recommended)
+├── guide/              # Developer guides (recommended)
+└── troubleshooting/    # FAQ & issues (recommended)
 ```
 
 ### Component Architecture
@@ -204,6 +265,31 @@ interface SharedData {
     sidebarOpen: boolean;
 }
 ```
+
+### Documentation
+
+Semua dokumentasi tersimpan di folder `/docs` dengan struktur kategori:
+
+- **log-audit/** - Security logs & audit documentation
+- **scurity-audit/** - Security audit reports & checklists
+- **api/** - API endpoints & authentication (recommended)
+- **architecture/** - System design & patterns (recommended)
+- **guide/** - Developer guides & tutorials (recommended)
+- **troubleshooting/** - FAQ & common issues (recommended)
+
+**Baca lebih lanjut**: Lihat [COPILOT_INSTRUCTIONS_SUMMARY.md](docs/COPILOT_INSTRUCTIONS_SUMMARY.md)
+
+### GitHub Copilot Instructions
+
+Project ini memiliki comprehensive Copilot instructions di `.github/copilot-instructions.md` (705 lines) yang mencakup:
+
+✅ **Architecture Patterns** - Admin vs Site separation  
+✅ **PHPStan Standards** - Type checking (Level 5)  
+✅ **ESLint Rules** - TypeScript/React linting  
+✅ **Pint Formatting** - PHP code formatting (PSR-12)  
+✅ **Documentation Structure** - `/docs` organization  
+
+Instruksi ini memastikan Copilot menghasilkan code yang comply dengan semua standards.
 
 ## 🎨 UI Components
 
@@ -259,6 +345,20 @@ php artisan test --filter=DashboardTest
 
 # Run with coverage
 php artisan test --coverage
+
+# Code quality checks
+./vendor/bin/phpstan analyze --memory-limit=2G  # PHPStan type checking
+./vendor/bin/pint --test                         # Pint format check
+npx eslint .                                     # ESLint check
+```
+
+### Test Results
+
+```
+✅ Pest:      75 tests passed (264 assertions)
+✅ PHPStan:   [OK] No errors
+✅ ESLint:    No errors
+✅ Pint:      PASS (85 files)
 ```
 
 ## 🔒 Security
@@ -274,18 +374,18 @@ Aplikasi ini telah melalui analisis keamanan komprehensif sebanyak **2 kali** (O
 ### 📚 Dokumentasi Keamanan
 
 **🎯 Mulai Di Sini**:
-- **[SECURITY_README.md](SECURITY_README.md)** - 📖 **Navigation guide untuk semua dokumentasi keamanan**
+- **[SECURITY_README.md](SECURITY_README.md)** - 📖 Navigation guide untuk semua dokumentasi keamanan
+- **[SECURITY_INDEX.md](SECURITY_INDEX.md)** - Index lengkap dokumentasi keamanan
 
 **Audit Terkini (Oktober 15, 2025)**:
-- **[SECURITY_AUDIT_2025.md](SECURITY_AUDIT_2025.md)** - Audit terbaru dengan findings lengkap
-- **[SECURITY_FIXES_IMMEDIATE.md](SECURITY_FIXES_IMMEDIATE.md)** - Panduan implementasi fixes
-- **[SECURITY_AUDIT_SUMMARY.txt](SECURITY_AUDIT_SUMMARY.txt)** - Visual summary report
+- **[docs/scurity-audit/SECURITY_AUDIT_2025.md](docs/scurity-audit/SECURITY_AUDIT_2025.md)** - Audit terbaru dengan findings lengkap
+- **[docs/scurity-audit/SECURITY_FIXES_IMMEDIATE.md](docs/scurity-audit/SECURITY_FIXES_IMMEDIATE.md)** - Panduan implementasi fixes
+- **[docs/scurity-audit/SECURITY_CHECKLIST.md](docs/scurity-audit/SECURITY_CHECKLIST.md)** - Deployment checklist
 
 **Audit Pertama (Oktober 14, 2025)**:
-- **[SECURITY_ANALYSIS.md](SECURITY_ANALYSIS.md)** - Analisis kerentanan original
-- **[SECURITY_IMPROVEMENTS.md](SECURITY_IMPROVEMENTS.md)** - Panduan implementasi detail
-- **[SECURITY_SUMMARY.md](SECURITY_SUMMARY.md)** - Executive summary
-- **[SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md)** - Checklist deployment
+- **[docs/scurity-audit/SECURITY_ANALYSIS.md](docs/scurity-audit/SECURITY_ANALYSIS.md)** - Analisis kerentanan original
+- **[docs/scurity-audit/SECURITY_IMPROVEMENTS.md](docs/scurity-audit/SECURITY_IMPROVEMENTS.md)** - Panduan implementasi detail
+- **[docs/scurity-audit/SECURITY_SUMMARY.md](docs/scurity-audit/SECURITY_SUMMARY.md)** - Executive summary
 
 ### 🛡️ Fitur Keamanan Built-in
 
@@ -296,6 +396,7 @@ Aplikasi ini telah melalui analisis keamanan komprehensif sebanyak **2 kali** (O
 - ✅ **XSS Protection** - React auto-escaping
 - ✅ **Password Hashing** - Bcrypt (12 rounds)
 - ✅ **Activity Logging** - Spatie Activity Log
+- ✅ **Type Safety** - PHPStan Level 5
 
 ### ⚠️ Rekomendasi Pre-Production
 
@@ -320,23 +421,52 @@ Sebelum deploy ke production, **WAJIB** review dan implementasi:
    SESSION_SECURE_COOKIE=true
    ```
 
-Baca **[SECURITY_ANALYSIS.md](SECURITY_ANALYSIS.md)** untuk detail lengkap.
+Baca **[docs/scurity-audit/SECURITY_ANALYSIS.md](docs/scurity-audit/SECURITY_ANALYSIS.md)** untuk detail lengkap.
 
-### 🔍 Security Audit
+### 🔍 Security Audit & Code Quality
 
 ```bash
-# Run security checks
+# Security checks
 composer audit
 npm audit --audit-level=high
 
-# Static analysis
-./vendor/bin/phpstan analyse
+# Static analysis & type checking
+./vendor/bin/phpstan analyze --memory-limit=2G
+
+# Code formatting & linting
+./vendor/bin/pint --test
+npx eslint .
 
 # Run security tests
 php artisan test --filter=SecurityTest
 ```
 
 ## 📝 Deployment
+
+### Pre-Deployment Checklist
+
+Sebelum deploy, pastikan telah menjalankan semua quality checks:
+
+```bash
+# 1. Code formatting dengan Pint
+./vendor/bin/pint
+
+# 2. Type checking dengan PHPStan (Level 5)
+./vendor/bin/phpstan analyze --memory-limit=2G
+
+# 3. Linting dengan ESLint
+npx eslint . --fix
+
+# 4. Running tests
+./vendor/bin/pest
+
+# 5. Security checks
+composer audit
+npm audit --audit-level=high
+
+# 6. Review security documentation
+# Baca: docs/scurity-audit/SECURITY_CHECKLIST.md
+```
 
 ### Production Build
 
@@ -371,7 +501,13 @@ DB_PORT=3306
 DB_DATABASE=your_database
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
+
+# Security
+SESSION_ENCRYPT=true
+SESSION_SECURE_COOKIE=true
 ```
+
+**Lihat juga**: [docs/scurity-audit/SECURITY_CHECKLIST.md](docs/scurity-audit/SECURITY_CHECKLIST.md)
 
 ## 🤝 Contributing
 
@@ -380,6 +516,78 @@ DB_PASSWORD=your_password
 3. Commit changes (`git commit -m 'Add amazing feature'`)
 4. Push ke branch (`git push origin feature/amazing-feature`)
 5. Open Pull Request
+
+## 📚 Code Standards & Development Guidelines
+
+### Required Reading
+
+Sebelum mulai development, **WAJIB** baca:
+
+1. **[.github/copilot-instructions.md](.github/copilot-instructions.md)** (705 lines)
+   - Comprehensive guide untuk semua developer & Copilot
+   - Covers: Architecture, PHPStan, ESLint, Pint, Documentation
+   
+2. **[docs/COPILOT_INSTRUCTIONS_SUMMARY.md](docs/COPILOT_INSTRUCTIONS_SUMMARY.md)**
+   - Quick reference untuk standards
+   - Tool chain workflow
+   - Common issues & fixes
+
+### Code Quality Standards
+
+**PHPStan (Type Checking - Level 5)**
+- All parameters & return types must have explicit type declarations
+- No implicit `any` types
+- Proper variable type casting
+- Use nullable types (`?Type` or `Type|null`)
+
+**ESLint (TypeScript/React Linting)**
+- No explicit `any` types (use specific types or `unknown`)
+- Type-safe prop interfaces
+- Proper import organization
+- No unused variables or imports
+
+**Pint (PHP Code Formatting)**
+- PSR-12 compliance
+- 4-space indentation
+- Proper import sorting
+- Constructor property promotion (PHP 8)
+
+**Documentation**
+- All docs in `/docs` folder organized by category
+- File naming: `UPPERCASE_WITH_UNDERSCORES.md`
+- Each category has `README.md` or `INDEX.md`
+- Include frontmatter with status & date
+
+### Development Workflow
+
+**Before committing code:**
+
+```bash
+# 1. Format PHP
+./vendor/bin/pint
+
+# 2. Type check PHP
+./vendor/bin/phpstan analyze --memory-limit=2G
+
+# 3. Format TypeScript/React
+npx eslint . --fix
+
+# 4. Run tests
+./vendor/bin/pest --no-coverage
+
+# 5. Verify all passing
+# If all green, ready to commit!
+```
+
+### Common Issues & Fixes
+
+| Issue | Solution |
+|-------|----------|
+| PHPStan error: "Parameter expects int, string given" | Cast option: `(int) $this->option('name')` |
+| ESLint error: "Unexpected any" | Use specific type or `unknown as Type` |
+| Unused variable warning | Remove variable or use it in code |
+| Formatting not applied | Run `./vendor/bin/pint` & `npx eslint . --fix` |
+| Test failing after changes | Run `./vendor/bin/pest` to see failures |
 
 ## 📄 License
 
@@ -401,26 +609,36 @@ Project ini menggunakan [MIT License](LICENSE).
 - **[Laravel Fortify](https://github.com/laravel/fortify)** - Frontend agnostic authentication backend
 
 ### Development Tools
+- **[PHPStan](https://phpstan.org/)** - Static analysis tool for PHP (Level 5 - strict)
+- **[Pint](https://laravel.com/docs/pint)** - Laravel's PHP code style fixer (PSR-12)
+- **[ESLint](https://eslint.org/)** - JavaScript/TypeScript linting with strict rules
 - **[Laravel Boost](https://laravel.com/docs/boost)** - Enhanced Laravel development experience
 - **[Vite](https://vitejs.dev/)** - Next generation frontend tooling
 - **[Pest](https://pestphp.com/)** - An elegant PHP testing framework
 - **[VS Code](https://code.visualstudio.com/)** - Code editor with excellent Laravel support
-- **[GitHub Copilot](https://github.com/features/copilot)** - AI pair programmer
+- **[GitHub Copilot](https://github.com/features/copilot)** - AI pair programmer with custom instructions
 
 ### UI & Icons  
 - **[Radix UI](https://www.radix-ui.com/)** - Low-level UI primitives for React
 - **[Lucide](https://lucide.dev/)** - Beautiful & consistent icon toolkit
 - **[Headless UI](https://headlessui.com/)** - Unstyled, accessible UI components
 
+### Documentation & Security
+- **[Laravel Security Guide](https://laravel.com/docs/security)** - Official Laravel security best practices
+- **[OWASP](https://owasp.org/)** - Security best practices reference
+
 ### Repository
 Terinspirasi dari **[Laravel React Starter Kit](https://github.com/laravel/react-starter-kit)** - Official Laravel starter kit untuk React
 
-
-### INFO
-Base project ini sudah digunakan oleh
+### Used By
+Base project ini sudah digunakan oleh:
 - **[indatechno](https://indatechno.com/)** 
 - **[santrimu](https://santrimu.com/)** 
 
 ---
 
-**Built with ❤️ using Laravel, React, and the amazing open source community**
+**Built with ❤️ using Laravel, React, TypeScript, and strict coding standards**
+
+Latest Update: October 16, 2025  
+Version: 1.0.0 Production Ready  
+Status: ✅ All quality checks passing
