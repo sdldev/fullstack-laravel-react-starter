@@ -511,5 +511,195 @@ npx eslint . --fix
 ✅ **Readability**: Uniform formatting across codebase  
 ✅ **Collaboration**: Team follows same rules  
 ✅ **CI/CD**: Can fail builds if code not formatted  
-✅ **Git diffs**: Less noise from formatting changes</content>
+✅ **Git diffs**: Less noise from formatting changes
+
+## Documentation Structure & Organization
+
+### Documentation Folder Location
+
+All project documentation should be organized in the `/docs` folder with clear category-based structure.
+
+**Root Documentation Path**: `/docs`
+
+### Documentation Categories & Folder Structure
+
+```
+docs/
+├── log-audit/                      # Logging and audit related docs
+│   ├── README_SECURITY_LOGS.md     # Security logs overview
+│   ├── SECURITY_LOGS_MONTHLY_ARCHIVE.md
+│   ├── CHANGES_SUMMARY.md
+│   ├── IMPLEMENTATION_COMPLETE.md
+│   ├── LOGS_COMPARISON_QUICK.md
+│   ├── LOGS_VISUAL_COMPARISON.md
+│   └── SECURITY_LOGS_ANALYSIS.md
+│
+├── scurity-audit/                  # Security audit related docs
+│   ├── SECURITY_README.md          # Security overview
+│   ├── SECURITY_INDEX.md           # Security index/table of contents
+│   ├── SECURITY_SUMMARY.md
+│   ├── SECURITY_ANALYSIS.md
+│   ├── SECURITY_AUDIT_2025.md
+│   ├── SECURITY_CHECKLIST.md
+│   ├── SECURITY_IMPROVEMENTS.md
+│   └── SECURITY_FIXES_IMMEDIATE.md
+│
+├── api/                            # API Documentation (create if needed)
+│   └── endpoints.md
+│
+├── architecture/                   # Architecture & Design Docs (create if needed)
+│   └── overview.md
+│
+├── guide/                          # User/Developer Guides (create if needed)
+│   └── getting-started.md
+│
+└── troubleshooting/                # Troubleshooting & FAQ (create if needed)
+    └── common-issues.md
+```
+
+### Documentation Categories Explained
+
+#### 1. **log-audit/** - Logging & Audit Documentation
+- **Purpose**: Documentation for security logs, audit trails, and logging system
+- **Content Types**: 
+  - Security log implementation guides
+  - Monthly archival processes
+  - Log analysis and comparison docs
+  - Implementation summaries
+- **Examples**:
+  - `SECURITY_LOGS_MONTHLY_ARCHIVE.md` - How monthly archival works
+  - `IMPLEMENTATION_COMPLETE.md` - Implementation overview
+  - `CHANGES_SUMMARY.md` - Change tracking
+
+#### 2. **scurity-audit/** - Security Audit Documentation
+- **Purpose**: Security analysis, audits, and security-related documentation
+- **Content Types**:
+  - Security audit reports
+  - Security analysis documents
+  - Security checklists
+  - Vulnerability fixes and improvements
+  - Security index/navigation
+- **Examples**:
+  - `SECURITY_AUDIT_2025.md` - Annual security audit
+  - `SECURITY_CHECKLIST.md` - Security compliance checklist
+  - `SECURITY_INDEX.md` - Index of all security docs
+
+#### 3. **api/** - API Documentation (Recommended to Create)
+- **Purpose**: API endpoints, request/response examples, authentication
+- **Suggested Files**:
+  - `endpoints.md` - All API endpoints
+  - `authentication.md` - Auth methods
+  - `errors.md` - Error handling
+
+#### 4. **architecture/** - Architecture & System Design (Recommended to Create)
+- **Purpose**: System architecture, design patterns, database schema
+- **Suggested Files**:
+  - `overview.md` - System overview
+  - `database-schema.md` - Database design
+  - `design-patterns.md` - Architecture patterns
+
+#### 5. **guide/** - User & Developer Guides (Recommended to Create)
+- **Purpose**: Step-by-step guides, tutorials, onboarding
+- **Suggested Files**:
+  - `getting-started.md` - Quick start guide
+  - `development-setup.md` - Dev environment setup
+  - `deployment.md` - Deployment guide
+
+#### 6. **troubleshooting/** - Troubleshooting & FAQ (Recommended to Create)
+- **Purpose**: Common issues, solutions, and frequently asked questions
+- **Suggested Files**:
+  - `common-issues.md` - Problem solutions
+  - `faq.md` - Frequently asked questions
+
+### Guidelines for Adding Documentation
+
+**When Creating New Documentation:**
+
+1. **Choose Appropriate Category**
+   - Place documentation in existing category if it fits
+   - Create new category folder if needed (e.g., `docs/performance/`)
+   - Category names should be lowercase, hyphen-separated
+
+2. **File Naming Convention**
+   - Use UPPERCASE_WITH_UNDERSCORES.md for document names
+   - Start with context: SECURITY_*, API_*, GUIDE_*, etc.
+   - Include README.md or INDEX.md for category overview
+
+3. **Documentation Structure**
+   ```markdown
+   # Document Title
+   
+   **Last Updated**: YYYY-MM-DD
+   **Category**: Folder name
+   **Status**: Draft/Review/Final
+   
+   ## Overview
+   Brief description of what this doc covers
+   
+   ## Table of Contents
+   - Section 1
+   - Section 2
+   
+   ## Content Sections
+   ### Section 1
+   Content here
+   
+   ### Section 2
+   Content here
+   
+   ## Related Documents
+   - [Related Doc](./path/to/related-doc.md)
+   - [External Link](https://example.com)
+   ```
+
+4. **README/INDEX Pattern**
+   - Each category should have a README.md or INDEX.md
+   - Acts as navigation for the category
+   - Lists all documents in the category with brief descriptions
+
+5. **Cross-Referencing**
+   - Link to related documents using relative paths
+   - Keep documentation interconnected
+   - Update links when moving or renaming files
+
+### Commands for Documentation
+
+**View all documentation:**
+```bash
+find docs -name "*.md" -type f | sort
+```
+
+**List documentation by category:**
+```bash
+ls -la docs/
+```
+
+**Create new documentation category:**
+```bash
+mkdir -p docs/new-category/
+touch docs/new-category/README.md
+```
+
+### Documentation Rules (MUST FOLLOW)
+
+1. **Location**: All documentation MUST be in `/docs` folder
+2. **Organization**: Documentation MUST be organized by category
+3. **Naming**: File names MUST be UPPERCASE_WITH_UNDERSCORES.md
+4. **Categories**: Create category folders for logical grouping
+5. **Index**: Each category SHOULD have README.md or INDEX.md
+6. **Links**: Use relative paths for cross-references
+7. **Updates**: Keep documentation in sync with code changes
+8. **Status**: Mark document status (Draft/Review/Final) in frontmatter
+
+### When Copilot Creates Documentation
+
+Copilot MUST:
+- ✅ Place docs in appropriate `/docs/category/` folder
+- ✅ Use UPPERCASE_WITH_UNDERSCORES.md naming
+- ✅ Include proper frontmatter with status and date
+- ✅ Create category folder if it doesn't exist
+- ✅ Create/update README.md or INDEX.md in category
+- ✅ Add cross-references to related docs
+- ✅ Use relative path links for references
+- ✅ Follow markdown best practices</content>
 <parameter name="filePath">/home/indatech/Documents/PROJECT/fullstack-laravel-react-starter/.github/copilot-instructions.md
