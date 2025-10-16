@@ -18,11 +18,11 @@ return new class extends Migration
             $table->string('address');
             $table->string('email');
             $table->string('phone');
-            $table->string('facebook');
-            $table->string('instagram');
-            $table->string('tiktok');
-            $table->string('youtube');
-            $table->string('image');
+            $table->string('facebook')->nullable();
+            $table->string('instagram')->nullable();
+            $table->string('tiktok')->nullable();
+            $table->string('youtube')->nullable();
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }

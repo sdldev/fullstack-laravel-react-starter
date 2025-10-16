@@ -14,9 +14,6 @@ class UpdateSettingappRequest extends FormRequest
 
     public function rules(): array
     {
-        // $settingappId = $this->route('settingapp')->id;
-        $settingappId = SettingApp::first()->id;
-
         return [
             'nama_app' => [
                 'required',
