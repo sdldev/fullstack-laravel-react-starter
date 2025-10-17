@@ -8,10 +8,8 @@ version: '3.8'
 services:
   # Laravel Application with FrankenPHP Worker Mode
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
+    image: ghcr.io/sdldev/fullstack-laravel-react-starter:latest
+    pull_policy: always
     container_name: laravel-app
     restart: unless-stopped
     ports:
@@ -95,10 +93,8 @@ services:
 
   # Queue Worker (Laravel)
   queue:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
+    image: ghcr.io/sdldev/fullstack-laravel-react-starter:latest
+    pull_policy: always
     container_name: laravel-queue
     restart: unless-stopped
     environment:
@@ -132,10 +128,8 @@ services:
 
   # Scheduler (Laravel Cron)
   scheduler:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
+    image: ghcr.io/sdldev/fullstack-laravel-react-starter:latest
+    pull_policy: always
     container_name: laravel-scheduler
     restart: unless-stopped
     environment:

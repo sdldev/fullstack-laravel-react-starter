@@ -42,6 +42,22 @@ main() {
     check_docker
     check_env
     
+    # Ask deployment mode
+    echo ""
+    echo "Deployment mode:"
+    echo "1) Production (use pre-built images from GitHub)"
+    echo "2) Development (build images locally)"
+    read -p "Enter mode [1-2]: " mode
+    
+    # Set compose files based on mode
+    if [ "$mode" == "2" ]; then
+        COMPOSE_FILES="-f docker-compose.yml -f docker-compose.dev.yml"
+        print_info "Using development mode (local build)"
+    else
+        COMPOSE_FILES=""
+        print_info "Using production mode (pre-built images)"
+    fi
+    
     # Ask user which services to deploy
     echo ""
     echo "Which services do you want to deploy?"
@@ -53,8 +69,10 @@ main() {
     case $choice in
         1)
             print_info "Deploying application services..."
-            docker compose build app queue scheduler
-            docker compose up -d
+            if [ "$mode" == "2" ]; then
+                docker compose $COMPOSE_FILES build app queue scheduler
+            fi
+            docker compose $COMPOSE_FILES up -d
             ;;
         2)
             print_info "Deploying infrastructure services..."
@@ -65,8 +83,10 @@ main() {
             docker compose -f docker-compose.infrastructure.yml up -d
             print_info "Waiting for infrastructure to be ready..."
             sleep 10
-            docker compose build app queue scheduler
-            docker compose up -d
+            if [ "$mode" == "2" ]; then
+                docker compose $COMPOSE_FILES build app queue scheduler
+            fi
+            docker compose $COMPOSE_FILES up -d
             ;;
         *)
             print_error "Invalid choice"

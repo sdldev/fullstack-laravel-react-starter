@@ -20,12 +20,14 @@ docker run --rm dunglas/frankenphp:1-php8.3-alpine php -r "echo 'base64:'.base64
 bash scripts/docker-deploy.sh
 
 # Or manually:
-# Deploy infrastructure (MySQL, MinIO, NPMplus)
-docker compose -f docker-compose.infrastructure.yml up -d
+# For production (use pre-built images from GitHub)
+docker compose -f docker-compose.infrastructure.yml up -d  # Infrastructure
+docker compose up -d  # Application
 
-# Deploy application (App, Redis, Queue, Scheduler)
-docker compose build
-docker compose up -d
+# For development (build locally)
+docker compose -f docker-compose.infrastructure.yml up -d  # Infrastructure
+docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
 ## 📦 Services
@@ -47,26 +49,38 @@ docker compose up -d
 
 ## 🔧 Deployment Options
 
-### Option 1: Application Only
-For development or when using external database/storage:
+### Production Deployment (Pre-built Images)
+
+Uses images from GitHub Container Registry:
+
 ```bash
+# Application only
+docker compose up -d
+
+# Infrastructure only
+docker compose -f docker-compose.infrastructure.yml up -d
+
+# Full stack
+docker compose -f docker-compose.infrastructure.yml up -d
 docker compose up -d
 ```
 
-### Option 2: Infrastructure Only
-For setting up database and storage services:
-```bash
-docker compose -f docker-compose.infrastructure.yml up -d
-```
+### Development Deployment (Local Build)
 
-### Option 3: Full Stack
-Complete deployment with all services:
+Builds images locally for development:
+
 ```bash
-# Infrastructure first
+# Application only
+docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+
+# Infrastructure only
 docker compose -f docker-compose.infrastructure.yml up -d
 
-# Wait for services to be ready, then deploy application
-docker compose up -d
+# Full stack
+docker compose -f docker-compose.infrastructure.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.dev.yml build
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
 ## 🔍 Monitoring
@@ -126,10 +140,14 @@ docker compose exec app php artisan migrate
 # Access shell
 docker compose exec app bash
 
-# Update and rebuild
-git pull
-docker compose build app queue scheduler
+# Update with new images (production)
+docker compose pull
 docker compose up -d --force-recreate app queue scheduler
+
+# Update with local build (development)
+git pull
+docker compose -f docker-compose.yml -f docker-compose.dev.yml build app queue scheduler
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --force-recreate app queue scheduler
 ```
 
 ## 🔐 Security Checklist

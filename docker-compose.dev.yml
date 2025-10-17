@@ -1,0 +1,33 @@
+version: '3.8'
+
+# Development Docker Compose configuration
+# This file overrides docker-compose.yml for local development
+# Usage: docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+  # Laravel Application - Build locally for development
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: laravel-app:dev
+    pull_policy: build
+
+  # Queue Worker - Build locally for development
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: laravel-app:dev
+    pull_policy: build
+
+  # Scheduler - Build locally for development
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    image: laravel-app:dev
+    pull_policy: build
