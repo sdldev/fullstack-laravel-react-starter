@@ -77,6 +77,24 @@ Welcome to the comprehensive documentation for the Fullstack Laravel React Start
 - Testing strategy
 - Deployment architecture
 
+### Operations Documentation (`docs/operations/`)
+
+| Document | Lines | Description | For |
+|----------|-------|-------------|-----|
+| **[DOCKER_DEPLOYMENT.md](operations/DOCKER_DEPLOYMENT.md)** | 450+ | Complete Docker deployment guide | DevOps, SysAdmins |
+| **[ADR_DOCKER_FRANKENPHP.md](operations/ADR_DOCKER_FRANKENPHP.md)** | 650+ | Architecture decision record | DevOps, Tech Leads |
+| **[DEPLOYMENT_SUMMARY.md](operations/DEPLOYMENT_SUMMARY.md)** | 750+ | Implementation summary | All |
+
+**Topics Covered**:
+- FrankenPHP worker mode setup
+- Docker Compose orchestration
+- MySQL, Redis, MinIO, NPMplus configuration
+- Port planning and networking
+- Monitoring and maintenance
+- Backup and recovery
+- Troubleshooting and optimization
+- CI/CD with GitHub Actions
+
 ### GitHub Configuration (`.github/`)
 
 | Document | Lines | Description | For |
@@ -84,6 +102,7 @@ Welcome to the comprehensive documentation for the Fullstack Laravel React Start
 | **[SECURITY.md](../.github/SECURITY.md)** | 100+ | Security policy, vulnerability reporting | All |
 | **[copilot-instructions.md](../.github/copilot-instructions.md)** | 705+ | Comprehensive Copilot coding standards | Developers using Copilot |
 | **[instructions](../.github/instructions)** | - | Laravel-specific instructions | Developers using Copilot |
+| **[docker-build.yml](../.github/workflows/docker-build.yml)** | 300+ | Docker CI/CD workflow | DevOps |
 
 ---
 
@@ -158,6 +177,12 @@ Welcome to the comprehensive documentation for the Fullstack Laravel React Start
 - [Extension Points](architecture/OVERVIEW.md#extension-points)
 
 ### Deployment
+
+**Docker Deployment** (Recommended):
+- [Docker Quick Start](../DOCKER_README.md) - Get started quickly
+- [Docker Deployment Guide](operations/DOCKER_DEPLOYMENT.md) - Complete guide
+- [Architecture Decision Record](operations/ADR_DOCKER_FRANKENPHP.md) - Why Docker + FrankenPHP
+- [Deployment Summary](operations/DEPLOYMENT_SUMMARY.md) - Implementation overview
 
 **Pre-Deployment**:
 - [Pre-Deployment Checklist](../SECURITY_CHECKLIST.md#pre-production-deployment)
@@ -246,6 +271,14 @@ php artisan migrate          # Run migrations
 php artisan migrate:fresh --seed  # Fresh database with seed data
 ```
 
+**Docker**:
+```bash
+bash scripts/docker-deploy.sh        # Deploy with Docker
+docker compose up -d                 # Start services
+docker compose logs -f app           # View logs
+docker compose exec app php artisan  # Run artisan commands
+```
+
 ---
 
 ## 📊 Documentation Statistics
@@ -254,11 +287,12 @@ php artisan migrate:fresh --seed  # Fresh database with seed data
 
 | Category | Documents | Lines | Status |
 |----------|-----------|-------|--------|
-| **Root** | 3 | ~600 | ✅ Complete |
+| **Root** | 4 | ~850 | ✅ Complete |
 | **Security** | 2 | 1,322+ | ✅ Complete |
 | **Architecture** | 2 | 870+ | ✅ Complete |
-| **GitHub Config** | 3 | 800+ | ✅ Complete |
-| **Total** | 10 | 3,592+ | ✅ Comprehensive |
+| **Operations** | 3 | 1,850+ | ✅ Complete |
+| **GitHub Config** | 4 | 1,100+ | ✅ Complete |
+| **Total** | 15 | 5,992+ | ✅ Comprehensive |
 
 ### Documentation Quality
 
