@@ -1,0 +1,116 @@
+version: '3.8'
+
+# Infrastructure Docker Compose configuration
+# Infrastructure services: MySQL, MinIO (S3), NPMplus (Nginx Proxy Manager)
+# These services can be deployed separately for better scalability and maintenance
+# See docs/operations/DOCKER_DEPLOYMENT.md for detailed documentation
+
+services:
+  # MySQL 8.x Database
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    restart: unless-stopped
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    environment:
+      MYSQL_DATABASE: "${DB_DATABASE:-laravel}"
+      MYSQL_USER: "${DB_USERNAME:-laravel}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/custom.cnf:ro
+    networks:
+      - laravel-network
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # MinIO - S3-compatible Object Storage
+  minio:
+    image: minio/minio:latest
+    container_name: laravel-minio
+    restart: unless-stopped
+    ports:
+      - "${MINIO_PORT:-9000}:9000"
+      - "${MINIO_CONSOLE_PORT:-9001}:9001"
+    environment:
+      MINIO_ROOT_USER: "${MINIO_ACCESS_KEY}"
+      MINIO_ROOT_PASSWORD: "${MINIO_SECRET_KEY}"
+    volumes:
+      - minio-data:/data
+    networks:
+      - laravel-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # MinIO Client - Create bucket on startup
+  minio-client:
+    image: minio/mc:latest
+    container_name: laravel-minio-client
+    depends_on:
+      - minio
+    networks:
+      - laravel-network
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc config host add minio http://minio:9000 ${MINIO_ACCESS_KEY} ${MINIO_SECRET_KEY};
+      /usr/bin/mc mb minio/${MINIO_BUCKET:-laravel} --ignore-existing;
+      /usr/bin/mc anonymous set download minio/${MINIO_BUCKET:-laravel};
+      exit 0;
+      "
+
+  # Nginx Proxy Manager (NPMplus)
+  npmplus:
+    image: zoeyvid/npmplus:latest
+    container_name: npmplus
+    restart: unless-stopped
+    ports:
+      - "80:80"       # HTTP
+      - "443:443"     # HTTPS
+      - "81:81"       # Admin UI
+    environment:
+      # NPMplus Configuration
+      TZ: UTC
+      # Database (uses same MySQL instance)
+      DB_MYSQL_HOST: mysql
+      DB_MYSQL_PORT: 3306
+      DB_MYSQL_NAME: npmplus
+      DB_MYSQL_USER: "${DB_USERNAME:-laravel}"
+      DB_MYSQL_PASSWORD: "${DB_PASSWORD}"
+    volumes:
+      - npmplus-data:/data
+      - npmplus-letsencrypt:/etc/letsencrypt
+    networks:
+      - laravel-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+networks:
+  laravel-network:
+    driver: bridge
+    name: laravel-network
+    external: false
+
+volumes:
+  mysql-data:
+    driver: local
+  minio-data:
+    driver: local
+  npmplus-data:
+    driver: local
+  npmplus-letsencrypt:
+    driver: local

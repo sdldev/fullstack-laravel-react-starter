@@ -20,28 +20,65 @@ docker run --rm dunglas/frankenphp:1-php8.3-alpine php -r "echo 'base64:'.base64
 bash scripts/docker-deploy.sh
 
 # Or manually:
+# Deploy infrastructure (MySQL, MinIO, NPMplus)
+docker compose -f docker-compose.infrastructure.yml up -d
+
+# Deploy application (App, Redis, Queue, Scheduler)
 docker compose build
 docker compose up -d
 ```
 
 ## 📦 Services
 
+### Application Services (`docker-compose.yml`)
 | Service | Port | Description |
 |---------|------|-------------|
 | App (FrankenPHP) | 8000 | Laravel application |
-| MySQL | 3306 | Database |
 | Redis | 6379 | Cache/Queue/Session |
+| Queue Worker | - | Laravel queue processor |
+| Scheduler | - | Laravel task scheduler |
+
+### Infrastructure Services (`docker-compose.infrastructure.yml`)
+| Service | Port | Description |
+|---------|------|-------------|
+| MySQL | 3306 | Database |
 | MinIO | 9000/9001 | S3-compatible storage |
 | NPMplus | 80/443/81 | Reverse proxy |
+
+## 🔧 Deployment Options
+
+### Option 1: Application Only
+For development or when using external database/storage:
+```bash
+docker compose up -d
+```
+
+### Option 2: Infrastructure Only
+For setting up database and storage services:
+```bash
+docker compose -f docker-compose.infrastructure.yml up -d
+```
+
+### Option 3: Full Stack
+Complete deployment with all services:
+```bash
+# Infrastructure first
+docker compose -f docker-compose.infrastructure.yml up -d
+
+# Wait for services to be ready, then deploy application
+docker compose up -d
+```
 
 ## 🔍 Monitoring
 
 ```bash
-# Check status
+# Check application services
 docker compose ps
-
-# View logs
 docker compose logs -f app
+
+# Check infrastructure services
+docker compose -f docker-compose.infrastructure.yml ps
+docker compose -f docker-compose.infrastructure.yml logs -f mysql
 
 # Health check
 curl http://localhost:8000/health
@@ -68,17 +105,20 @@ See [docs/operations/ADR_DOCKER_FRANKENPHP.md](docs/operations/ADR_DOCKER_FRANKE
 ## 🛠️ Useful Commands
 
 ```bash
-# Start services
+# Start all services
+docker compose -f docker-compose.infrastructure.yml up -d
 docker compose up -d
 
 # Stop services
 docker compose down
+docker compose -f docker-compose.infrastructure.yml down
 
 # Restart app
 docker compose restart app
 
 # View specific service logs
-docker compose logs -f mysql
+docker compose logs -f queue
+docker compose -f docker-compose.infrastructure.yml logs -f mysql
 
 # Run artisan commands
 docker compose exec app php artisan migrate
@@ -88,8 +128,8 @@ docker compose exec app bash
 
 # Update and rebuild
 git pull
-docker compose build app
-docker compose up -d --force-recreate app
+docker compose build app queue scheduler
+docker compose up -d --force-recreate app queue scheduler
 ```
 
 ## 🔐 Security Checklist

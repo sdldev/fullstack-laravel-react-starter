@@ -42,21 +42,57 @@ main() {
     check_docker
     check_env
     
-    print_info "Building Docker images..."
-    docker compose build app
-    print_success "Images built"
+    # Ask user which services to deploy
+    echo ""
+    echo "Which services do you want to deploy?"
+    echo "1) Application only (app, redis, queue, scheduler)"
+    echo "2) Infrastructure only (mysql, minio, npmplus)"
+    echo "3) All services (application + infrastructure)"
+    read -p "Enter choice [1-3]: " choice
     
-    print_info "Starting services..."
-    docker compose up -d
-    print_success "Services started"
+    case $choice in
+        1)
+            print_info "Deploying application services..."
+            docker compose build app queue scheduler
+            docker compose up -d
+            ;;
+        2)
+            print_info "Deploying infrastructure services..."
+            docker compose -f docker-compose.infrastructure.yml up -d
+            ;;
+        3)
+            print_info "Deploying all services..."
+            docker compose -f docker-compose.infrastructure.yml up -d
+            print_info "Waiting for infrastructure to be ready..."
+            sleep 10
+            docker compose build app queue scheduler
+            docker compose up -d
+            ;;
+        *)
+            print_error "Invalid choice"
+            exit 1
+            ;;
+    esac
+    
+    print_success "Services deployed"
     
     echo ""
-    echo "Services:"
-    docker compose ps
+    echo "Services status:"
+    if [ "$choice" == "1" ] || [ "$choice" == "3" ]; then
+        docker compose ps
+    fi
+    if [ "$choice" == "2" ] || [ "$choice" == "3" ]; then
+        docker compose -f docker-compose.infrastructure.yml ps
+    fi
+    
     echo ""
     echo "URLs:"
     echo "  App: http://localhost:8000"
     echo "  Health: http://localhost:8000/health"
+    if [ "$choice" == "2" ] || [ "$choice" == "3" ]; then
+        echo "  MinIO Console: http://localhost:9001"
+        echo "  NPMplus Admin: http://localhost:81"
+    fi
     echo ""
 }
 
