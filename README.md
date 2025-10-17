@@ -377,6 +377,7 @@ Aplikasi ini telah melalui comprehensive security audit (Oktober 16, 2025).
 **🎯 Mulai Di Sini**:
 - **[SECURITY_README.md](SECURITY_README.md)** - 📖 Navigation guide untuk semua dokumentasi keamanan
 - **[SECURITY_CHECKLIST.md](SECURITY_CHECKLIST.md)** - Quick reference checklist
+- **[COMPREHENSIVE_AUDIT_GUIDE.md](COMPREHENSIVE_AUDIT_GUIDE.md)** - 🔍 Complete guide to security audit workflow
 
 **Audit Komprehensif (Oktober 16, 2025)**:
 - **[docs/security-audit/SECURITY_AUDIT_CURRENT.md](docs/security-audit/SECURITY_AUDIT_CURRENT.md)** - Comprehensive security audit terkini
@@ -393,6 +394,29 @@ Aplikasi ini telah melalui comprehensive security audit (Oktober 16, 2025).
 - ✅ **Password Hashing** - Bcrypt (12 rounds)
 - ✅ **Activity Logging** - Spatie Activity Log
 - ✅ **Type Safety** - PHPStan Level 5
+
+### 🔍 Automated Security Audit
+
+Jalankan comprehensive security audit kapan saja melalui GitHub Actions:
+
+**Audit Meliputi**:
+- 🔍 Vulnerability scanning (Composer & NPM)
+- 🔬 Static code analysis (PHPStan Level 5)
+- ✨ Code quality checks (Pint, ESLint, Prettier)
+- 🧪 Full test suite execution
+- 🛡️ Security-specific tests (20+ test cases)
+- 📊 TypeScript type checking
+
+**Cara Menjalankan**:
+1. Buka tab **Actions** di GitHub
+2. Pilih workflow **"security-audit"**
+3. Klik **"Run workflow"**
+4. Pilih branch yang ingin diaudit
+5. Klik **"Run workflow"** untuk eksekusi
+
+**Hasil Audit**:
+- Download artifacts: `security-audit-results` dan `security-report`
+- Lihat detail lengkap di [COMPREHENSIVE_AUDIT_GUIDE.md](COMPREHENSIVE_AUDIT_GUIDE.md)
 
 ### ⚠️ Rekomendasi Pre-Production
 
