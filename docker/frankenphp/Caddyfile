@@ -1,0 +1,21 @@
+{
+  # global options; set to "debug" for troubleshooting
+  # debug
+}
+
+:10080 {
+  encode zstd gzip
+  root * /app/public
+
+  # FrankenPHP worker-mode for Laravel
+  php_server {
+    worker /app/public/index.php
+  }
+
+  # Static files
+  file_server
+
+  header {
+    X-Powered-By "FrankenPHP"
+  }
+}
