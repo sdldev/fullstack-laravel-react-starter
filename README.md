@@ -78,6 +78,40 @@ Sebuah starter kit fullstack modern yang menggabungkan Laravel 12, React 19, dan
 
 ## 🚀 Quick Start
 
+### 🐳 Docker Deployment (Recommended for Production)
+
+**Quick Deploy with Docker:**
+
+```bash
+# 1. Copy environment template
+cp .env.docker .env
+
+# 2. Edit .env and configure:
+#    - Generate APP_KEY
+#    - Update all passwords
+#    - Set APP_URL
+
+# 3. Deploy
+bash scripts/docker-deploy.sh
+```
+
+**What you get:**
+- ⚡ **FrankenPHP** worker mode (10-20x faster than PHP-FPM)
+- 🗄️ **MySQL 8.0** database
+- 🚀 **Redis 7** for cache/session/queue
+- 📦 **MinIO** S3-compatible storage
+- 🔒 **NPMplus** reverse proxy with SSL
+- 📊 Queue workers and scheduler
+
+**Documentation:**
+- [Quick Start Guide](DOCKER_README.md)
+- [Complete Deployment Guide](docs/operations/DOCKER_DEPLOYMENT.md)
+- [Architecture Decision Record](docs/operations/ADR_DOCKER_FRANKENPHP.md)
+
+---
+
+### 💻 Local Development Setup
+
 ### Prerequisites
 - PHP 8.4 atau higher
 - Node.js 18 atau higher
@@ -441,6 +475,52 @@ php artisan test --filter=SecurityTest
 
 ## 📝 Deployment
 
+### 🐳 Docker Deployment (Production)
+
+**Recommended for production** - Complete infrastructure with FrankenPHP worker mode:
+
+```bash
+# 1. Copy environment template
+cp .env.docker .env
+
+# 2. Edit .env:
+#    - Generate APP_KEY
+#    - Set all passwords (DB, Redis, MinIO)
+#    - Configure APP_URL
+
+# 3. Deploy
+bash scripts/docker-deploy.sh
+
+# Or manually:
+docker compose build
+docker compose up -d
+
+# Check status
+docker compose ps
+curl http://localhost:8000/health
+```
+
+**Services included:**
+- ⚡ FrankenPHP (10-20x faster than PHP-FPM)
+- 🗄️ MySQL 8.0
+- 🚀 Redis 7
+- 📦 MinIO (S3-compatible)
+- 🔒 NPMplus (reverse proxy + SSL)
+- 📊 Queue worker
+- ⏰ Task scheduler
+
+**Documentation:**
+- [Quick Start](DOCKER_README.md)
+- [Complete Guide](docs/operations/DOCKER_DEPLOYMENT.md)
+- [Architecture Decision](docs/operations/ADR_DOCKER_FRANKENPHP.md)
+- [Implementation Summary](docs/operations/DEPLOYMENT_SUMMARY.md)
+
+---
+
+### 💻 Traditional Deployment
+
+For VPS or traditional hosting:
+
 ### Pre-Deployment Checklist
 
 Sebelum deploy, pastikan telah menjalankan semua quality checks:
@@ -463,7 +543,7 @@ composer audit
 npm audit --audit-level=high
 
 # 6. Review security documentation
-# Baca: docs/scurity-audit/SECURITY_CHECKLIST.md
+# Baca: docs/security-audit/SECURITY_CHECKLIST.md
 ```
 
 ### Production Build
