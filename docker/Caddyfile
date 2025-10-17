@@ -1,0 +1,130 @@
+# Caddyfile for FrankenPHP Worker Mode
+# High-performance Laravel application serving
+
+{
+    # Global options
+    frankenphp {
+        # Enable worker mode for better performance
+        # Workers keep the application in memory
+        worker {
+            file /app/public/index.php
+            num {$FRANKENPHP_WORKERS:4}
+            env
+        }
+    }
+
+    # Disable admin API
+    admin off
+
+    # Enable automatic HTTPS (production)
+    # auto_https off
+}
+
+# Main application server block
+:80 {
+    # Set root directory
+    root * /app/public
+
+    # Enable compression
+    encode zstd gzip
+
+    # Security headers
+    header {
+        # HSTS (optional in development, required in production)
+        # Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        
+        # Prevent MIME type sniffing
+        X-Content-Type-Options "nosniff"
+        
+        # XSS Protection
+        X-XSS-Protection "1; mode=block"
+        
+        # Clickjacking protection
+        X-Frame-Options "SAMEORIGIN"
+        
+        # Referrer policy
+        Referrer-Policy "strict-origin-when-cross-origin"
+        
+        # Remove server header
+        -Server
+        
+        # Content Security Policy (adjust as needed)
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'"
+    }
+
+    # Health check endpoint
+    handle /health {
+        respond "OK" 200
+    }
+
+    # Handle static files efficiently
+    @static {
+        path *.css *.js *.ico *.png *.jpg *.jpeg *.gif *.svg *.webp *.woff *.woff2 *.ttf *.eot *.json
+    }
+    
+    handle @static {
+        # Set cache headers for static assets
+        header Cache-Control "public, max-age=31536000, immutable"
+        file_server
+    }
+
+    # Handle Laravel application with FrankenPHP
+    php_server {
+        # Resolve symlinks
+        resolve_root_symlink
+    }
+
+    # Logging
+    log {
+        output stdout
+        format json
+        level {$LOG_LEVEL:INFO}
+    }
+}
+
+# HTTPS server block (production)
+:443 {
+    # TLS configuration
+    # tls /path/to/cert.pem /path/to/key.pem
+    
+    root * /app/public
+    encode zstd gzip
+
+    # Security headers (same as above)
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-XSS-Protection "1; mode=block"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        -Server
+        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'"
+    }
+
+    # Health check
+    handle /health {
+        respond "OK" 200
+    }
+
+    # Static files
+    @static {
+        path *.css *.js *.ico *.png *.jpg *.jpeg *.gif *.svg *.webp *.woff *.woff2 *.ttf *.eot *.json
+    }
+    
+    handle @static {
+        header Cache-Control "public, max-age=31536000, immutable"
+        file_server
+    }
+
+    # PHP handling
+    php_server {
+        resolve_root_symlink
+    }
+
+    # Logging
+    log {
+        output stdout
+        format json
+        level {$LOG_LEVEL:INFO}
+    }
+}
