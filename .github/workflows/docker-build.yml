@@ -9,12 +9,14 @@ on:
       - 'Dockerfile'
       - 'docker/**'
       - 'docker-compose.yml'
+      - 'docker-compose.infrastructure.yml'
       - '.github/workflows/docker-build.yml'
   pull_request:
     paths:
       - 'Dockerfile'
       - 'docker/**'
       - 'docker-compose.yml'
+      - 'docker-compose.infrastructure.yml'
       - '.github/workflows/docker-build.yml'
   workflow_dispatch:
 
@@ -137,14 +139,17 @@ jobs:
       - name: Build Docker image
         run: docker compose build app
 
-      - name: Start services
+      - name: Start infrastructure services
         run: |
-          docker compose up -d mysql redis minio
-          echo "Waiting for services to be ready..."
+          docker compose -f docker-compose.infrastructure.yml up -d mysql minio
+          echo "Waiting for infrastructure services to be ready..."
           sleep 30
 
-      - name: Start application
+      - name: Start application services
         run: |
+          docker compose up -d redis
+          echo "Waiting for Redis to be ready..."
+          sleep 10
           docker compose up -d app
           echo "Waiting for application to start..."
           sleep 20
@@ -214,12 +219,13 @@ jobs:
           docker compose logs app
           echo ""
           echo "=== MySQL Logs ==="
-          docker compose logs mysql | tail -20
+          docker compose -f docker-compose.infrastructure.yml logs mysql | tail -20
           echo ""
           echo "=== Redis Logs ==="
           docker compose logs redis | tail -20
           echo ""
           docker compose down -v
+          docker compose -f docker-compose.infrastructure.yml down -v
 
   push:
     name: Push Docker Image

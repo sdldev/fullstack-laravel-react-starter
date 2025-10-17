@@ -15,8 +15,8 @@ RUN npm ci --prefer-offline --no-audit
 # Copy frontend source files
 COPY resources ./resources
 COPY public ./public
-COPY vite.config.ts tsconfig.json components.json ./
-COPY postcss.config.js tailwind.config.js eslint.config.js .prettierrc .prettierignore ./
+COPY vite.config.ts tsconfig.json components.json eslint.config.js ./
+COPY .prettierrc .prettierignore ./
 
 # Build production assets
 RUN npm run build
