@@ -1,0 +1,81 @@
+version: "3.9"
+
+x-common-env: &common-env
+  APP_ENV: production
+  APP_DEBUG: "false"
+  # Provide DB and S3/MinIO secrets via env_file (.env) or environment below
+  # DB_HOST, DB_PORT=3306, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+  # FILESYSTEM_DISK=s3, AWS_* for MinIO
+
+services:
+  web:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.frankenphp
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      <<: *common-env
+      # If you do not use env_file, uncomment and provide values here
+      # DB_HOST: 10.10.0.30
+      # DB_PORT: 3306
+      # DB_DATABASE: your_db
+      # DB_USERNAME: your_user
+      # DB_PASSWORD: your_pass
+      # FILESYSTEM_DISK: s3
+      # AWS_ACCESS_KEY_ID: minioadmin
+      # AWS_SECRET_ACCESS_KEY: strong-minio-pass
+      # AWS_DEFAULT_REGION: us-east-1
+      # AWS_BUCKET: your-bucket
+      # AWS_ENDPOINT: http://10.10.0.40:9000
+      # AWS_USE_PATH_STYLE_ENDPOINT: "true"
+    ports:
+      # Bind to App VPS private IP only; adjust IP as needed
+      - "10.10.0.20:10080:10080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:10080/healthz || exit 1"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+
+  queue:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.frankenphp
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      <<: *common-env
+    command: sh -lc "php artisan queue:work --sleep=1 --tries=3 --max-time=3600"
+    depends_on:
+      - web
+    deploy:
+      resources:
+        limits:
+          cpus: "0.50"
+          memory: 512M
+
+  scheduler:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.frankenphp
+    restart: unless-stopped
+    env_file:
+      - ../../.env
+    environment:
+      <<: *common-env
+    command: sh -lc "while true; do php artisan schedule:run --verbose --no-interaction; sleep 60; done"
+    depends_on:
+      - web
+    deploy:
+      resources:
+        limits:
+          cpus: "0.10"
+          memory: 128M
