@@ -1,0 +1,78 @@
+name: Docker build and healthcheck
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "docker/**"
+      - ".github/workflows/docker-build-healthcheck.yml"
+      - "package.json"
+      - "composer.json"
+      - "composer.lock"
+      - "public/**"
+      - "resources/**"
+      - "vite.config.*"
+  pull_request:
+    paths:
+      - "docker/**"
+      - ".github/workflows/docker-build-healthcheck.yml"
+      - "package.json"
+      - "composer.json"
+      - "composer.lock"
+      - "public/**"
+      - "resources/**"
+      - "vite.config.*"
+
+jobs:
+  build-and-healthcheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image (FrankenPHP) with cache
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile.frankenphp
+          tags: app:ci
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Run container
+        run: |
+          docker run -d --name app-ci \
+            -p 10080:10080 \
+            -e APP_ENV=production \
+            -e APP_DEBUG=false \
+            # Dummy APP_KEY for bootstrap if needed (not used by /healthz)
+            -e APP_KEY=base64:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA= \
+            app:ci
+
+      - name: Health check
+        run: |
+          set -e
+          tries=30
+          until curl -fsS http://localhost:10080/healthz | grep -q "ok"; do
+            tries=$((tries-1))
+            if [ "$tries" -le 0 ]; then
+              echo "Health check failed after retries"
+              echo "--- Container logs ---"
+              docker logs app-ci || true
+              exit 1
+            fi
+            sleep 2
+          done
+          echo "Health check passed"
+
+      - name: Cleanup
+        if: always()
+        run: |
+          docker ps -a || true
+          docker logs app-ci || true
+          docker rm -f app-ci || true
