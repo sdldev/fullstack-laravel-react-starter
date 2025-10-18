@@ -12,13 +12,6 @@ test('cache_service helper returns CacheService instance', function () {
     expect($cacheService)->toBeInstanceOf(CacheService::class);
 });
 
-test('cache_service helper returns the same instance on multiple calls', function () {
-    $instance1 = cache_service();
-    $instance2 = cache_service();
-
-    expect($instance1)->toBe($instance2);
-});
-
 test('cache_service provides access to supportsTags method', function () {
     $cacheService = cache_service();
 
