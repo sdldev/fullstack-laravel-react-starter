@@ -1,5 +1,7 @@
 # Asset Separation: Admin Dashboard vs Site
 
+> 📊 **Quick Visual Guide**: See [ASSET_SEPARATION_VISUAL.md](ASSET_SEPARATION_VISUAL.md) for diagrams and flowcharts.
+
 ## Ringkasan
 
 Repository ini menggunakan pemisahan asset yang jelas antara **Admin Dashboard** dan **Site** (public/user-facing pages). Pemisahan ini mencakup:
