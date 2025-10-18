@@ -68,6 +68,7 @@ Sebuah starter kit fullstack modern yang menggabungkan Laravel 12, React 19, dan
 ### Development Tools
 - `laravel/boost` - Enhanced Laravel development experience
 - `laravel/pint` - PHP CS Fixer untuk Laravel
+- `rector/rector` - Automated PHP code refactoring
 - `pestphp/pest` - Modern PHP testing framework
 
 ### Frontend Components
@@ -144,12 +145,21 @@ npm run types           # TypeScript type checking
 ./vendor/bin/phpstan analyze --memory-limit=2G  # PHPStan - Type checking
 ./vendor/bin/pint                                # Pint - PHP formatting
 ./vendor/bin/pint --test                         # Test without fixing
+./vendor/bin/rector process --dry-run           # Rector - Check refactoring opportunities
+./vendor/bin/rector process                      # Rector - Apply refactoring (use with caution!)
 
 # Backend
 composer setup          # Full setup script
 php artisan serve       # Start Laravel server
 php artisan test        # Run tests (Pest)
 php artisan migrate     # Run database migrations
+
+# Development helper scripts
+./.script-dev-build.sh     # Build frontend assets
+./.script-dev-check.sh     # Run full quality checks (Pint, PHPStan, Rector dry-run, tests)
+./.script-install.sh       # Setup fresh application
+./.script-update.sh        # Update application (git pull, migrate, build)
+./.script-rector.sh        # Apply Rector refactoring with safety checks
 ```
 
 ### Complete Code Quality Workflow
@@ -161,11 +171,17 @@ php artisan migrate     # Run database migrations
 # Type check PHP with PHPStan (Level 5)
 ./vendor/bin/phpstan analyze --memory-limit=2G
 
+# Check refactoring opportunities with Rector (dry-run)
+./vendor/bin/rector process --dry-run
+
 # Format & lint TypeScript/React with ESLint
 npx eslint . --fix
 
 # Run tests to ensure everything works
 ./vendor/bin/pest --no-coverage
+
+# Or use the convenience script for all checks
+./.script-dev-check.sh
 ```
 
 ## 🏗️ Arsitektur
