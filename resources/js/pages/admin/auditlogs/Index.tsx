@@ -21,6 +21,13 @@ import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { Eye } from 'lucide-react';
+
+// Decode HTML entities safely
+function decodeHtmlEntities(text: string): string {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+}
 interface ActivityProperties {
     [key: string]: unknown;
 }
@@ -173,11 +180,7 @@ export default function AuditLogIndex({ logs }: Props) {
                                     })
                                 }
                             >
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
+                                {decodeHtmlEntities(link.label)}
                             </Button>
                         ))}
                     </div>
