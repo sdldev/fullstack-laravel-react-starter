@@ -1,8 +1,8 @@
 # Documentation Index
 
-**Last Updated**: October 16, 2025  
+**Last Updated**: October 18, 2025  
 **Project**: Fullstack Laravel React Starter  
-**Version**: 1.0.0  
+**Version**: 1.1.0  
 
 Welcome to the comprehensive documentation for the Fullstack Laravel React Starter project. This index helps you navigate all available documentation.
 
@@ -175,6 +175,20 @@ Welcome to the comprehensive documentation for the Fullstack Laravel React Start
 - Flexible validation (sometimes|required)
 - Robust image handling dengan default avatar fallback
 - Two-layer error handling (backend accessor + frontend onError)
+
+### Performance & Caching
+
+**Cache Management**:
+- [Cache Helper Function](performance/CACHE_HELPER_FUNCTION.md) - Global cache_service() helper for convenient access
+- [Cache Management - User List](performance/CACHE_MANAGEMENT_USER_LIST.md) - Targeted cache clearing strategy
+- [User CRUD Performance Optimization](performance/USER_CRUD_PERFORMANCE_OPTIMIZATION.md) - Performance improvements
+
+**Key Features**:
+- Global `cache_service()` helper function for convenient access
+- Tag-aware caching with automatic fallback for non-taggable stores
+- Targeted cache clearing (avoid Cache::flush())
+- CacheService abstraction for consistent cache operations
+- Guidance on when to use helper vs dependency injection
 
 ### Deployment
 
@@ -381,6 +395,12 @@ If you find:
 ---
 
 ## 📝 Document History
+
+### Version 1.1 (October 18, 2025)
+- Added cache helper function documentation
+- Updated Copilot instructions with helper function guidance
+- Added Performance & Caching section to index
+- Enhanced development workflow documentation
 
 ### Version 1.0 (October 16, 2025)
 - Initial comprehensive documentation
