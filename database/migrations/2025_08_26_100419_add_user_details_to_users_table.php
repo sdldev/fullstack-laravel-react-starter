@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('role')->default('member');
-            $table->string('member_number')->unique()->nullable();
-            $table->string('full_name')->nullable();
-            $table->text('address')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('member_number')->unique(); // Required field
+            $table->string('full_name'); // Required field
+            $table->text('address'); // Required field
+            $table->string('phone'); // Required field
             $table->date('join_date')->nullable();
             $table->text('note')->nullable();
             $table->string('image')->nullable();

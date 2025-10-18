@@ -128,6 +128,10 @@ test('validation fails for duplicate email', function () {
         'password' => 'password123',
         'password_confirmation' => 'password123',
         'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User Full',
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
     ];
 
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
@@ -146,6 +150,9 @@ test('validation fails for duplicate member number', function () {
         'password_confirmation' => 'password123',
         'role' => 'user',
         'member_number' => 'MEM001', // Duplicate member number
+        'full_name' => 'Test User Full',
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
     ];
 
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
@@ -264,13 +271,12 @@ test('user creation requires required fields', function () {
     $admin = User::factory()->create(['role' => 'admin']);
 
     $userData = [
-        // Missing required fields: name, email, password, password_confirmation, role
-        'member_number' => 'MEM001',
+        // Missing required fields: name, email, password, password_confirmation, role, member_number, full_name, address, phone
     ];
 
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
 
-    $response->assertSessionHasErrors(['name', 'email', 'password', 'role']);
+    $response->assertSessionHasErrors(['name', 'email', 'password', 'role', 'member_number', 'full_name', 'address', 'phone']);
 });
 
 test('user creation validates email format', function () {
@@ -282,6 +288,10 @@ test('user creation validates email format', function () {
         'password' => 'password123',
         'password_confirmation' => 'password123',
         'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User Full',
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
     ];
 
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
@@ -298,6 +308,10 @@ test('user creation validates role values', function () {
         'password' => 'password123',
         'password_confirmation' => 'password123',
         'role' => 'invalid-role', // Invalid role
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User Full',
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
     ];
 
     $response = $this->actingAs($admin)->post('/admin/users', $userData);
@@ -373,4 +387,145 @@ test('users index shows correct pagination data', function () {
         ->where('users.current_page', 1)
         ->has('users.data', 3) // Should have 3 items on first page
     );
+});
+
+test('user creation validates member_number is required', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $userData = [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'role' => 'user',
+        // Missing member_number
+        'full_name' => 'Test User Full',
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
+    ];
+
+    $response = $this->actingAs($admin)->post('/admin/users', $userData);
+
+    $response->assertSessionHasErrors('member_number');
+});
+
+test('user creation validates full_name is required', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $userData = [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        // Missing full_name
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
+    ];
+
+    $response = $this->actingAs($admin)->post('/admin/users', $userData);
+
+    $response->assertSessionHasErrors('full_name');
+});
+
+test('user creation validates address is required', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $userData = [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User Full',
+        // Missing address
+        'phone' => '+1234567890',
+    ];
+
+    $response = $this->actingAs($admin)->post('/admin/users', $userData);
+
+    $response->assertSessionHasErrors('address');
+});
+
+test('user creation validates phone is required', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+
+    $userData = [
+        'name' => 'Test User',
+        'email' => 'test@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User Full',
+        'address' => '123 Test Street',
+        // Missing phone
+    ];
+
+    $response = $this->actingAs($admin)->post('/admin/users', $userData);
+
+    $response->assertSessionHasErrors('phone');
+});
+
+test('user update allows nullable fields', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $user = User::factory()->create([
+        'role' => 'user',
+        'member_number' => 'MEM001',
+    ]);
+
+    // Update with only required fields (name and email)
+    $updateData = [
+        'name' => 'Updated Name',
+        'email' => 'updated@example.com',
+        // All other fields are nullable in UpdateUserRequest
+    ];
+
+    $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
+
+    $response->assertRedirect('/admin/users');
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'name' => 'Updated Name',
+        'email' => 'updated@example.com',
+    ]);
+});
+
+test('user update validates member_number uniqueness', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $user1 = User::factory()->create(['member_number' => 'MEM001']);
+    $user2 = User::factory()->create(['member_number' => 'MEM002']);
+
+    // Try to update user1 with user2's member_number
+    $updateData = [
+        'name' => $user1->name,
+        'email' => $user1->email,
+        'member_number' => 'MEM002', // Duplicate with user2
+    ];
+
+    $response = $this->actingAs($admin)->put("/admin/users/{$user1->id}", $updateData);
+
+    $response->assertSessionHasErrors('member_number');
+});
+
+test('user update allows same member_number for same user', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $user = User::factory()->create(['member_number' => 'MEM001']);
+
+    // Update user with their own member_number
+    $updateData = [
+        'name' => 'Updated Name',
+        'email' => $user->email,
+        'member_number' => 'MEM001', // Same member_number
+    ];
+
+    $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
+
+    $response->assertRedirect('/admin/users');
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'member_number' => 'MEM001',
+    ]);
 });

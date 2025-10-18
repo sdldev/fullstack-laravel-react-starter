@@ -192,13 +192,210 @@ class ImageService
     }
 
     /**
-     * Validate if file is a valid image
+     * Validate if file is a valid image with multiple security checks
+     *
+     * Security layers:
+     * 1. MIME type validation (can be spoofed - first check only)
+     * 2. File extension validation
+     * 3. Actual image content validation using getimagesize()
+     * 4. Intervention Image validation (can it be read as image?)
+     * 5. File size limit
      */
     protected function isValidImage(UploadedFile $file): bool
     {
+        // Layer 1: MIME type check (basic, can be spoofed)
         $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (! in_array($file->getMimeType(), $allowedMimes, true)) {
+            \Log::warning('File rejected: Invalid MIME type', [
+                'mime' => $file->getMimeType(),
+                'filename' => $file->getClientOriginalName(),
+            ]);
 
-        return in_array($file->getMimeType(), $allowedMimes, true) &&
-               $file->getSize() <= 10 * 1024 * 1024; // 10MB max
+            return false;
+        }
+
+        // Layer 2: File extension validation
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (! in_array($extension, $allowedExtensions, true)) {
+            \Log::warning('File rejected: Invalid extension', [
+                'extension' => $extension,
+                'filename' => $file->getClientOriginalName(),
+            ]);
+
+            return false;
+        }
+
+        // Layer 3: Actual image content validation using getimagesize()
+        // This reads the file header to verify it's a real image
+        try {
+            $imageInfo = @getimagesize($file->getRealPath());
+            if ($imageInfo === false) {
+                \Log::warning('File rejected: Not a valid image file (getimagesize failed)', [
+                    'filename' => $file->getClientOriginalName(),
+                ]);
+
+                return false;
+            }
+
+            // Verify MIME type from actual file content matches declared MIME
+            $actualMimeType = $imageInfo['mime'] ?? null;
+            if (! in_array($actualMimeType, $allowedMimes, true)) {
+                \Log::warning('File rejected: Content MIME type mismatch', [
+                    'declared_mime' => $file->getMimeType(),
+                    'actual_mime' => $actualMimeType,
+                    'filename' => $file->getClientOriginalName(),
+                ]);
+
+                return false;
+            }
+        } catch (\Exception $e) {
+            \Log::error('File validation error: '.$e->getMessage(), [
+                'filename' => $file->getClientOriginalName(),
+            ]);
+
+            return false;
+        }
+
+        // Layer 4: Intervention Image validation
+        // Try to read the image with Intervention - if it fails, it's not a valid image
+        try {
+            $testImage = $this->imageManager->read($file->getRealPath());
+            // If we can get dimensions, it's a real image
+            $width = $testImage->width();
+            $height = $testImage->height();
+
+            if ($width <= 0 || $height <= 0) {
+                \Log::warning('File rejected: Invalid image dimensions', [
+                    'width' => $width,
+                    'height' => $height,
+                    'filename' => $file->getClientOriginalName(),
+                ]);
+
+                return false;
+            }
+
+            // Reasonable dimension limits to prevent attacks
+            if ($width > 10000 || $height > 10000) {
+                \Log::warning('File rejected: Image dimensions too large', [
+                    'width' => $width,
+                    'height' => $height,
+                    'filename' => $file->getClientOriginalName(),
+                ]);
+
+                return false;
+            }
+        } catch (\Exception $e) {
+            \Log::warning('File rejected: Intervention Image cannot read file', [
+                'error' => $e->getMessage(),
+                'filename' => $file->getClientOriginalName(),
+            ]);
+
+            return false;
+        }
+
+        // Layer 5: File size limit (10MB max)
+        $maxSize = 10 * 1024 * 1024; // 10MB
+        if ($file->getSize() > $maxSize) {
+            \Log::warning('File rejected: File size exceeds limit', [
+                'size' => $file->getSize(),
+                'max_size' => $maxSize,
+                'filename' => $file->getClientOriginalName(),
+            ]);
+
+            return false;
+        }
+
+        // All checks passed
+        return true;
+    }
+
+    /**
+     * Process and store image with custom dimensions (converts to WebP)
+     * Generic method for all controllers (User, Article, Payment, etc.)
+     *
+     * @param  UploadedFile  $file  The uploaded file
+     * @param  string  $storagePath  Storage folder (e.g., 'users', 'articles', 'payments')
+     * @param  int  $width  Target width in pixels
+     * @param  int  $height  Target height in pixels
+     * @param  string|null  $prefix  Filename prefix (e.g., 'avatar', 'article', 'payment')
+     * @param  int  $quality  WebP quality (0-100, default 85)
+     * @return string|false Full path to stored file (e.g., 'users/avatar-123456.webp')
+     */
+    public function processImageWithDimensions(
+        UploadedFile $file,
+        string $storagePath,
+        int $width,
+        int $height,
+        ?string $prefix = null,
+        int $quality = 85
+    ) {
+        try {
+            // Validate the uploaded file
+            if (! $file->isValid() || ! $this->isValidImage($file)) {
+                throw new \Exception('Invalid image file. Allowed types: JPEG, PNG, GIF, WebP. Max size: 10MB.');
+            }
+
+            // Create storage directory if it doesn't exist
+            $this->ensureDirectoryExists($storagePath);
+
+            // Generate unique filename
+            $baseName = $prefix ? $prefix.'-'.Str::random(8) : Str::random(10);
+            $timestamp = time();
+            $filename = "{$baseName}-{$timestamp}.webp";
+
+            // Process the image
+            $image = $this->imageManager->read($file->getRealPath());
+
+            // Resize to exact dimensions (cover fit - crops to exact size)
+            $image->cover($width, $height);
+
+            // Convert to WebP with specified quality
+            $image->toWebp($quality);
+
+            // Save the processed image
+            $filePath = $storagePath.'/'.$filename;
+
+            // Save to temporary file first
+            $tempPath = tempnam(sys_get_temp_dir(), 'image_');
+            $image->save($tempPath);
+
+            // Store using Laravel's filesystem
+            $result = Storage::disk('public')->put($filePath, file_get_contents($tempPath));
+
+            // Clean up temporary file
+            unlink($tempPath);
+
+            return $result ? $filePath : false;
+
+        } catch (\Exception $e) {
+            \Log::error('Error processing image: '.$e->getMessage());
+
+            throw new \Exception('Failed to process image: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * Delete image from storage (generic method for all controllers)
+     *
+     * @param  string|null  $imagePath  Full path to image (e.g., 'users/avatar-123.webp')
+     */
+    public function deleteImageFile(?string $imagePath): bool
+    {
+        if (empty($imagePath)) {
+            return false;
+        }
+
+        try {
+            if (Storage::disk('public')->exists($imagePath)) {
+                return Storage::disk('public')->delete($imagePath);
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            \Log::error('Error deleting image: '.$e->getMessage());
+
+            return false;
+        }
     }
 }

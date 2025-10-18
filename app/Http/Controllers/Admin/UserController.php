@@ -3,21 +3,44 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Http\Requests\Admin\Users\StoreUserRequest;
 use App\Http\Requests\Admin\Users\UpdateUserRequest;
-use App\Services\ImageUploadService;
+use App\Models\User;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function __construct(private ImageUploadService $imageService) {}
+    public function __construct(private ImageService $imageService) {}
 
     public function index(Request $request)
     {
-        $perPage = $request->get('per_page', 10);
-        $users = User::paginate($perPage);
+        $perPage = (int) $request->get('per_page', 10);
+        $page = (int) $request->get('page', 1);
+
+        // Cache key with pagination params for unique caching per page
+        $cacheKey = "users_list_page_{$page}_per_{$perPage}";
+
+        // Cache for 5 minutes (300 seconds) to reduce database load
+        $users = Cache::remember($cacheKey, 300, function () use ($perPage) {
+            return User::select([
+                'id',
+                'name',
+                'email',
+                'role',
+                'member_number',
+                'full_name',
+                'phone',
+                'join_date',
+                'is_active',
+                'created_at',
+                // Exclude: password, address, note, image, updated_at, etc.
+            ])
+                ->latest('created_at')
+                ->paginate($perPage);
+        });
 
         return Inertia::render('admin/users/Index', [
             'users' => $users,
@@ -28,19 +51,23 @@ class UserController extends Controller
         ]);
     }
 
-    public function store(\App\Http\Requests\Admin\StoreUserRequest $request)
+    public function store(StoreUserRequest $request)
     {
         $data = $request->validated();
         $data['password'] = bcrypt($data['password']);
         $data['is_active'] = $data['is_active'] ?? true; // Auto-approve by default
 
-        // Handle image upload with security
+        // Handle image upload with WebP conversion
+        // User avatars: 200x200px, stored in 'users' folder
         if ($request->hasFile('image')) {
             try {
-                $data['image'] = $this->imageService->uploadSecure(
-                    $request->file('image'),
-                    'users',
-                    1000
+                $data['image'] = $this->imageService->processImageWithDimensions(
+                    file: $request->file('image'),
+                    storagePath: 'users',
+                    width: 200,
+                    height: 200,
+                    prefix: 'avatar',
+                    quality: 85
                 );
             } catch (\Exception $e) {
                 return back()->withErrors(['image' => $e->getMessage()]);
@@ -49,10 +76,13 @@ class UserController extends Controller
 
         User::create($data);
 
+        // Clear all users cache to show fresh data
+        Cache::flush();
+
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
-    public function update(\App\Http\Requests\Admin\UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
         $data = $request->validated();
 
@@ -63,17 +93,21 @@ class UserController extends Controller
             unset($data['password']);
         }
 
-        // Handle image upload with security
+        // Handle image upload with WebP conversion
+        // User avatars: 200x200px, stored in 'users' folder
         if ($request->hasFile('image')) {
             try {
                 if ($user->image) {
-                    $this->imageService->deleteSecure($user->image, 'users');
+                    $this->imageService->deleteImageFile($user->image);
                 }
 
-                $data['image'] = $this->imageService->uploadSecure(
-                    $request->file('image'),
-                    'users',
-                    1000
+                $data['image'] = $this->imageService->processImageWithDimensions(
+                    file: $request->file('image'),
+                    storagePath: 'users',
+                    width: 200,
+                    height: 200,
+                    prefix: 'avatar',
+                    quality: 85
                 );
             } catch (\Exception $e) {
                 return back()->withErrors(['image' => $e->getMessage()]);
@@ -81,6 +115,9 @@ class UserController extends Controller
         }
 
         $user->update($data);
+
+        // Clear cache to reflect updated data
+        Cache::flush();
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
@@ -92,12 +129,15 @@ class UserController extends Controller
             abort(403, 'You cannot delete your own account.');
         }
 
-        // Delete image securely
+        // Delete avatar image
         if ($user->image) {
-            $this->imageService->deleteSecure($user->image, 'users');
+            $this->imageService->deleteImageFile($user->image);
         }
 
         $user->delete();
+
+        // Clear cache to reflect deletion
+        Cache::flush();
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
