@@ -6,7 +6,6 @@ Sections
 - Getting Started — development setup and key commands
 - Architecture — outline of folder structure and design patterns
 - Image Upload — how avatars are processed, validation, and usage
-- Image Upload — how avatars are processed, validation, and usage
 - ImageService API — detailed API and examples for `App\Services\ImageService`
 - Cache Management — safe caching patterns and `CacheService`
 - Testing — how to run tests locally and CI notes
