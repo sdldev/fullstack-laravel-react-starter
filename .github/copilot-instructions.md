@@ -1,136 +1,38 @@
-# GitHub Copilot Instructions
+# GitHub Copilot / AI Agent Instructions (concise)
 
-## Architecture Overview
+This repo is a Laravel 12 backend + React 19 frontend using Inertia. Key boundaries:
 
-This is a Laravel 12 + React 19 + Inertia.js fullstack application with strict separation between admin (authenticated) and site (public) contexts.
+- Backend: `app/Http/Controllers/Admin/*` and `app/Http/Controllers/Site/*`. Admin-only routes live in `routes/admin.php` (auth + can:admin). Public/site routes in `routes/web.php`.
+- Frontend: Inertia pages in `resources/js/pages/admin/*` and `resources/js/pages/site/*`. Vite entrypoints: `resources/js/entries/admin.tsx` and `site.tsx`.
 
-### Key Structural Patterns
+What you must follow (short rules for an AI code agent):
 
-**Admin vs Site Separation:**
-**API**
-- **Api routes**: `routes/api.php` with `middleware(['auth:sanctum', 'verified'])`
-- **Admin routes**: `routes/admin.php` with `middleware(['auth', 'verified', 'can:admin'])`
-- **Site routes**: `routes/web.php` for public access
-- **Controllers**: `app/Http/Controllers/Admin/*` vs `app/Http/Controllers/Site/*`
-- **Admin Requests**: `app/Http/Requests/Admin/*` vs `app/Http/Requests/Site/*`
-- **Admin Views**: `resources/js/pages/admin/*` vs `resources/js/pages/site/*`
+1. Keep Admin vs Site separation: add new admin features under `app/Http/Controllers/Admin` and `resources/js/pages/admin`.
+2. Use FormRequest classes for validation in `app/Http/Requests/Admin/*` or `Site/*`. Put authorization logic in `authorize()`.
+3. Follow the ImageService pattern: controllers pass storage path and dimensions to `App\Services\ImageService::processImageWithDimensions(...)`. The service returns the stored filename (DB stores filename only). Example use: `storagePath: 'users', width:200, height:200, prefix:'avatar'` in `UserController`.
+4. Caching: avoid `Cache::flush()`. Use targeted keys or tags. There is a central `App\Services\CacheService` used for users list caching (`users_list_page_{page}_per_{perPage}`) and tag-aware invalidation.
+5. Tests: use Pest / RefreshDatabase trait. For admin tests use `actingAs($admin)` where `$admin = User::factory()->create(['role' => 'admin'])`.
+6. Static checks: run Pint (PHP formatting), PHPStan (level 5), and ESLint/TypeScript checks before PRs. Commands:
 
-- **Frontend pages**: `resources/js/pages/admin/*` vs `resources/js/pages/site/*`
-- **Vite entries**: `resources/js/entries/admin.tsx` vs `resources/js/entries/site.tsx`
-
-**Authentication & Authorization:**
-- Role-based system with `admin` and `user` roles defined in User model
-- Admin access controlled by `auth()->user()->role === 'admin'` checks
-- Auto-approval for new user registrations (`is_active` defaults to `true`)
-- FormRequest authorization in `authorize()` method
-
-### File Organization Examples
-
-**Adding Admin CRUD:**
-```php
-// routes/admin.php
-Route::resource('admin/users', UserController::class)->names('admin.users');
-
-// app/Http/Controllers/Admin/UserController.php
-public function index(Request $request) {
-    $users = User::paginate(15);
-    return Inertia::render('admin/users/Index', [
-        'users' => $users,
-        'breadcrumbs' => [['title' => 'Users', 'href' => '/admin/users']]
-    ]);
-}
+```bash
+./vendor/bin/pint
+./vendor/bin/phpstan analyze --memory-limit=2G
+npx eslint . --fix
+./vendor/bin/pest
 ```
 
-**Admin Page Component:**
-```tsx
-// resources/js/pages/admin/users/Index.tsx
-import AppLayout from '@/layouts/app-layout';
+Examples & file pointers (copyable patterns):
 
-export default function Index({ users, breadcrumbs }) {
-    return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            {/* Content */}
-        </AppLayout>
-    );
-}
-```
+- User list caching (controller): `app/Http/Controllers/Admin/UserController.php` uses `CacheService::rememberUsersList($page,$perPage,300, fn() => User::select(...)->paginate($perPage))` and `CacheService::clearUsersList()` after creates/updates/deletes.
+- Image processing (service): `app/Services/ImageService.php` — validate (multiple checks), convert to WebP, resize (cover), return filename only; deletion expects disk path like `users/filename.webp`.
+- Model accessor: `App\Models\User::getImageUrlAttribute()` returns `asset('storage/' . $this->attributes['image'])` with a fallback `asset('user.svg')`.
 
-### Development Workflow
+When making changes, be explicit in commits/PR descriptions: list files changed, migrations (Y/N), tests added/updated, and local run steps. Keep changes small and unit-tested.
 
-**Build Commands:**
-- `npm run dev` - Start Vite dev server
-- `npm run build` - Production build
-- `composer run dev` - Alternative dev command
-- `php artisan test` - Run Pest tests
-- `vendor/bin/pint` - Code formatting
+If you need clarification about a design decision (e.g. whether to use cache tags in production), ask before making broad changes.
 
-**Testing Patterns:**
-- Use `RefreshDatabase` trait for feature tests
-- Test admin authorization with `actingAs($admin)` where `$admin = User::factory()->create(['role' => 'admin'])`
-- Assert Inertia components with `assertInertia(fn ($page) => $page->component('admin/users/Index'))`
-
-### Code Conventions
-
-**Backend:**
-- FormRequest validation in `app/Http/Requests/Admin/*`
-- Eager loading with `->with()` to prevent N+1 queries
-- Bcrypt passwords: `$data['password'] = bcrypt($data['password'])`
-- Image uploads: `$request->file('image')->store('users', 'public')`
-
-**Frontend:**
-- shadcn/ui components from `@/components/ui/*`
-- AppLayout wrapper for admin pages with breadcrumbs
-- TypeScript interfaces for props
-- Pagination with `users.last_page > 1` condition
-
-**Database:**
-- Extended User model with role-based fields
-- Boolean casting for `is_active`
-- Date casting for `join_date`
-
-### Common Patterns
-
-**User Management:**
-- Auto-approve new users: `$data['is_active'] = $data['is_active'] ?? true`
-- Role validation: `'role' => 'required|string|in:admin,user'`
-- Unique constraints: `'member_number' => 'nullable|string|max:255|unique:users'`
-
-**UI Components:**
-- Badge variants: `variant={user.role === 'admin' ? 'destructive' : 'secondary'}`
-- Table actions: View/Edit/Delete buttons in flex container
-- Pagination: Smart display with ellipsis for large page counts
-
-### Key Files to Reference
-
-- `vite.config.ts` - Build configuration with admin/site entries
-- `bootstrap/app.php` - Route configuration and middleware
-- `app/Models/User.php` - Extended user fields and casting
-- `resources/js/entries/admin.tsx` - Admin Inertia app setup
-- `tests/Feature/Admin/UserControllerTest.php` - Testing patterns
-
-## Code Quality & Static Analysis
-
-### PHPStan Configuration
-
-**PHPStan Level**: 5 (strict type checking)
-- **Config File**: `phpstan.neon`
-- **Command**: `./vendor/bin/phpstan analyze --memory-limit=2G`
-- **Excluded Files**: 
-  - `app/Services/HybridSecurityLogService.php` (reference implementation)
-  - `app/Console/Commands/OptimizeSecurityLogs.php` (optional command)
-
-### PHPStan Requirements (MUST)
-
-When writing PHP code, ensure:
-
-1. **Type Declarations**
-   - All function parameters must have explicit type declarations
-   - All function return types must be declared
-   - Use union types where applicable: `string|int|null`
-   - Example:
-   ```php
-   public function getUserData(int $userId, string $format = 'json'): array|null
-   ```
+---
+Please review this shorter guidance. Tell me if you want me to expand any section (tests, caching, image handling, or frontend patterns) or to open a PR with the change.
 
 2. **Variable Type Casting**
    - Cast regex matches and option values explicitly
