@@ -31,6 +31,13 @@ import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/react';
 import { Eye, Filter } from 'lucide-react';
 
+// Decode HTML entities safely
+function decodeHtmlEntities(text: string): string {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+}
+
 interface SecurityLogContext {
     [key: string]: unknown;
     email?: string;
@@ -389,11 +396,7 @@ export default function SecurityLogsIndex({ logs, filters }: Props) {
                                     })
                                 }
                             >
-                                <span
-                                    dangerouslySetInnerHTML={{
-                                        __html: link.label,
-                                    }}
-                                />
+                                {decodeHtmlEntities(link.label)}
                             </Button>
                         ))}
                     </div>

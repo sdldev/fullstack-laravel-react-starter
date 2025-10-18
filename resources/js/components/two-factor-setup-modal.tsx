@@ -74,10 +74,10 @@ function TwoFactorSetupStep({
                         <div className="mx-auto aspect-square w-64 rounded-lg border border-border">
                             <div className="z-10 flex h-full w-full items-center justify-center p-5">
                                 {qrCodeSvg ? (
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: qrCodeSvg,
-                                        }}
+                                    <img
+                                        src={`data:image/svg+xml;base64,${btoa(qrCodeSvg)}`}
+                                        alt="Two-factor authentication QR code"
+                                        className="h-full w-full"
                                     />
                                 ) : (
                                     <Spinner />
