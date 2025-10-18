@@ -81,6 +81,22 @@ const mainNavItems: MainNavItem[] = [
             },
         ],
     },
+    {
+        title: 'API',
+        icon: Shield,
+        subitem: [
+            {
+                title: 'API Documentation',
+                href: '/admin/api-docs',
+                icon: ArrowRight,
+            },
+            {
+                title: 'API Keys',
+                href: '/admin/api-tokens',
+                icon: ArrowRight,
+            },
+        ],
+    },
 ];
 
 const footerNavItems: NavItem[] = [

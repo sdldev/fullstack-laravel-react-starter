@@ -20,8 +20,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 // Admin-only API token management routes
-Route::middleware(['auth:sanctum', 'can:admin'])->group(function () {
-    Route::get('/admin/tokens', [ApiTokenController::class, 'index'])->name('api.admin.tokens.index');
-    Route::post('/admin/tokens', [ApiTokenController::class, 'store'])->name('api.admin.tokens.store');
-    Route::delete('/admin/tokens/{token}', [ApiTokenController::class, 'destroy'])->name('api.admin.tokens.destroy');
-});
+// Route::middleware(['auth:sanctum', 'can:admin'])->group(function () {
+//     Route::get('/admin/tokens', [ApiTokenController::class, 'index'])->name('api.admin.tokens.index');
+//     Route::post('/admin/tokens', [ApiTokenController::class, 'store'])->name('api.admin.tokens.store');
+//     Route::delete('/admin/tokens/{token}', [ApiTokenController::class, 'destroy'])->name('api.admin.tokens.destroy');
+// });
