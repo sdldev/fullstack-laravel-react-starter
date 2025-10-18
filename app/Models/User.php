@@ -45,9 +45,12 @@ class User extends Authenticatable
             return asset('user.svg');
         }
 
-        // Image stored as: users/avatar-xxx.webp
-        // Return: /storage/users/avatar-xxx.webp
-        return asset('storage/' . $this->attributes['image']);
+        // Image is stored in the public disk under the 'users' folder and the
+        // database only contains the filename (e.g. "avatar-xxx.webp").
+        // Build the correct public URL: /storage/users/{filename}
+        $filename = ltrim($this->attributes['image'], '/');
+
+        return asset('storage/users/' . $filename);
     }
 
     /**

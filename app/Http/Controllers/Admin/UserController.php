@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\Users\UpdateUserRequest;
 use App\Models\User;
 use App\Services\ImageService;
 use App\Services\CacheService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -94,6 +95,22 @@ class UserController extends Controller
         // Handle image upload with WebP conversion
         // User avatars: 200x200px, stored in 'users' folder
         if ($request->hasFile('image')) {
+            // Debug: log that an image was included in the request (metadata only)
+            try {
+                $fileMeta = $request->file('image');
+                Log::info('User update: image upload detected', [
+                    'user_id' => $user->id,
+                    'original_name' => $fileMeta->getClientOriginalName(),
+                    'mime' => $fileMeta->getMimeType(),
+                    'size' => $fileMeta->getSize(),
+                ]);
+            } catch (\Throwable $e) {
+                // non-fatal: continue to processing but log warning
+                Log::warning('User update: failed to read uploaded file metadata', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+            }
             try {
                 // Delete old image if exists
                 // Database stores filename only: avatar-123.webp
@@ -113,7 +130,13 @@ class UserController extends Controller
                     quality: 85
                 );
             } catch (\Exception $e) {
-                return back()->withErrors(['image' => $e->getMessage()]);
+                // Log detailed error for debugging and return a user-friendly message
+                Log::error('Image processing failed during user update', [
+                    'user_id' => $user->id,
+                    'error' => $e->getMessage(),
+                ]);
+
+                return back()->withErrors(['image' => 'Failed to process uploaded image.']);
             }
         } else {
             // If no new image uploaded, don't change the image field
