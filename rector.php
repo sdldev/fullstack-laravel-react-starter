@@ -13,6 +13,12 @@ return RectorConfig::configure()
         __DIR__.'/public',
         __DIR__.'/routes',
     ])
+    ->withSkip([
+        ReadOnlyPropertyRector::class,
+        EncapsedStringsToSprintfRector::class,
+        DisallowedEmptyRuleFixerRector::class,
+        BooleanInBooleanNotRuleFixerRector::class,
+    ])
     ->withPreparedSets(
         deadCode: true,
         codeQuality: true,
@@ -21,7 +27,7 @@ return RectorConfig::configure()
         earlyReturn: true,
         strictBooleans: true,
     )
-    ->withPhpSets(php83: true)
+    ->withPhpSets(php84: true)
     ->withImportNames()
     ->withSkip([
         // Skip vendor files
