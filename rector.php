@@ -27,7 +27,7 @@ return RectorConfig::configure()
         earlyReturn: true,
         strictBooleans: true,
     )
-    ->withPhpSets(php84: true)
+    ->withPhpSets(php83: true)
     ->withImportNames()
     ->withSkip([
         // Skip vendor files
