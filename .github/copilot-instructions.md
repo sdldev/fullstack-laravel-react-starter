@@ -702,4 +702,4 @@ Copilot MUST:
 - ✅ Add cross-references to related docs
 - ✅ Use relative path links for references
 - ✅ Follow markdown best practices</content>
-<parameter name="filePath">/home/indatech/Documents/PROJECT/fullstack-laravel-react-starter/.github/copilot-instructions.md
+<parameter name="filePath">/home/indatech/Documents/PROJECT/fullstack-laravel-react-starter/.github/copilot-instructions.md</parameter>

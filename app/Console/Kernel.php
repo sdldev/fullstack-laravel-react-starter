@@ -15,6 +15,9 @@ class Kernel extends ConsoleKernel
         // Archive security logs older than 1 month every day at 01:00 AM
         $schedule->command('logs:archive-security')->dailyAt('01:00');
 
+        // Prune expired personal access tokens daily at 02:00 AM
+        $schedule->command('tokens:prune-expired')->dailyAt('02:00');
+
         // Alternative: Run weekly on Sundays if you prefer
         // $schedule->command('logs:archive-security')->weekly();
     }

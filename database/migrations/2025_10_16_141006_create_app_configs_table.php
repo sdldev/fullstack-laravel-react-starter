@@ -18,11 +18,11 @@ return new class extends Migration
             $table->text('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->unique()->nullable();
-             $table->string('facebook')->nullable();
-             $table->string('instagram')->nullable();
-             $table->string('youtube')->nullable();
-             $table->string('tiktok')->nullable();
-             $table->string('twitter')->nullable();
+            $table->string('facebook')->nullable();
+            $table->string('instagram')->nullable();
+            $table->string('youtube')->nullable();
+            $table->string('tiktok')->nullable();
+            $table->string('twitter')->nullable();
             $table->string('image')->nullable(); // Image path in storage/public
             $table->timestamps();
 

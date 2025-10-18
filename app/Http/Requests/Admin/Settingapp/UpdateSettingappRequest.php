@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin\Settingapp;
 
-use App\Models\SettingApp;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateSettingappRequest extends FormRequest

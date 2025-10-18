@@ -52,15 +52,15 @@ class SettingAppControllerTest extends TestCase
     public function test_admin_can_view_settings_page(): void
     {
         SettingApp::create([
-            'nama_app'    => 'Test App',
+            'nama_app' => 'Test App',
             'description' => 'Test Description',
-            'address'     => 'Test Address',
-            'phone'       => '+62-812-3456-7890',
-            'email'       => 'test@example.com',
-            'facebook'    => 'https://facebook.com/test',
-            'instagram'   => 'https://instagram.com/test',
-            'youtube'     => 'https://youtube.com/@test',
-            'tiktok'      => 'https://tiktok.com/@test',
+            'address' => 'Test Address',
+            'phone' => '+62-812-3456-7890',
+            'email' => 'test@example.com',
+            'facebook' => 'https://facebook.com/test',
+            'instagram' => 'https://instagram.com/test',
+            'youtube' => 'https://youtube.com/@test',
+            'tiktok' => 'https://tiktok.com/@test',
         ]);
 
         $response = $this->actingAs($this->admin)
@@ -78,23 +78,23 @@ class SettingAppControllerTest extends TestCase
     public function test_admin_can_update_settings(): void
     {
         SettingApp::create([
-            'nama_app'    => 'Old App',
+            'nama_app' => 'Old App',
             'description' => 'Old Desc',
-            'address'     => 'Old Addr',
-            'phone'       => '000',
-            'email'       => 'old@example.com',
+            'address' => 'Old Addr',
+            'phone' => '000',
+            'email' => 'old@example.com',
         ]);
 
         $data = [
-            'nama_app'    => 'Updated App',
+            'nama_app' => 'Updated App',
             'description' => 'Updated Description',
-            'address'     => 'Updated Address',
-            'phone'       => '+62-812-9876-5432',
-            'email'       => 'updated@example.com',
-            'facebook'    => 'https://facebook.com/updated',
-            'instagram'   => 'https://instagram.com/updated',
-            'youtube'     => 'https://youtube.com/@updated',
-            'tiktok'      => 'https://tiktok.com/@updated',
+            'address' => 'Updated Address',
+            'phone' => '+62-812-9876-5432',
+            'email' => 'updated@example.com',
+            'facebook' => 'https://facebook.com/updated',
+            'instagram' => 'https://instagram.com/updated',
+            'youtube' => 'https://youtube.com/@updated',
+            'tiktok' => 'https://tiktok.com/@updated',
         ];
 
         $response = $this->actingAs($this->admin)
@@ -103,7 +103,7 @@ class SettingAppControllerTest extends TestCase
         $response->assertRedirect(route('setting.edit'));
         $this->assertDatabaseHas('settingapp', [
             'nama_app' => 'Updated App',
-            'email'    => 'updated@example.com',
+            'email' => 'updated@example.com',
             'facebook' => 'https://facebook.com/updated',
         ]);
     }
@@ -113,12 +113,12 @@ class SettingAppControllerTest extends TestCase
         $file = UploadedFile::fake()->image('logo.png', 100, 100);
 
         $data = [
-            'nama_app'    => 'App With Logo',
+            'nama_app' => 'App With Logo',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => '1234567',
-            'email'       => 'a@example.com',
-            'image'       => $file,
+            'address' => 'Addr',
+            'phone' => '1234567',
+            'email' => 'a@example.com',
+            'image' => $file,
         ];
 
         $response = $this->actingAs($this->admin)
@@ -135,14 +135,14 @@ class SettingAppControllerTest extends TestCase
     public function test_social_media_links_stored_correctly(): void
     {
         $data = [
-            'nama_app'    => 'Social Media Test',
+            'nama_app' => 'Social Media Test',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => '1234567',
-            'email'       => 'a@example.com',
-            'facebook'    => 'https://facebook.com/test',
-            'instagram'   => 'https://instagram.com/test',
-            'tiktok'      => '',
+            'address' => 'Addr',
+            'phone' => '1234567',
+            'email' => 'a@example.com',
+            'facebook' => 'https://facebook.com/test',
+            'instagram' => 'https://instagram.com/test',
+            'tiktok' => '',
         ];
 
         $response = $this->actingAs($this->admin)
@@ -159,24 +159,24 @@ class SettingAppControllerTest extends TestCase
         $oldFile = UploadedFile::fake()->image('old.png', 100, 100);
 
         $setting = SettingApp::create([
-            'nama_app'    => 'App',
+            'nama_app' => 'App',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => '1234567',
-            'email'       => 'a@example.com',
-            'image'       => $oldFile->store('images', 'public'),
+            'address' => 'Addr',
+            'phone' => '1234567',
+            'email' => 'a@example.com',
+            'image' => $oldFile->store('images', 'public'),
         ]);
 
         Storage::disk('public')->assertExists($setting->image);
 
         $newFile = UploadedFile::fake()->image('new.png', 100, 100);
         $data = [
-            'nama_app'    => 'App',
+            'nama_app' => 'App',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => '1234567',
-            'email'       => 'a@example.com',
-            'image'       => $newFile,
+            'address' => 'Addr',
+            'phone' => '1234567',
+            'email' => 'a@example.com',
+            'image' => $newFile,
         ];
 
         $response = $this->actingAs($this->admin)
@@ -194,11 +194,11 @@ class SettingAppControllerTest extends TestCase
     public function test_validation_requires_nama_app(): void
     {
         $data = [
-            'nama_app'    => '',
+            'nama_app' => '',
             'description' => 'Test',
-            'address'     => 'Test',
-            'phone'       => '123',
-            'email'       => 'test@example.com',
+            'address' => 'Test',
+            'phone' => '123',
+            'email' => 'test@example.com',
         ];
 
         $response = $this->actingAs($this->admin)
@@ -213,11 +213,11 @@ class SettingAppControllerTest extends TestCase
         // To enforce phone format, add: 'phone' => 'required|regex:/^[\d\s\-\+\(\)]+$/'
         // For now, we test that 'abc' (3 chars) passes length validation
         $data = [
-            'nama_app'    => 'Test App',
+            'nama_app' => 'Test App',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => 'ab',  // Too short (min:3)
-            'email'       => 'test@example.com',
+            'address' => 'Addr',
+            'phone' => 'ab',  // Too short (min:3)
+            'email' => 'test@example.com',
         ];
 
         $response = $this->actingAs($this->admin)
@@ -229,11 +229,11 @@ class SettingAppControllerTest extends TestCase
     public function test_validation_email_format(): void
     {
         $data = [
-            'nama_app'    => 'Test App',
+            'nama_app' => 'Test App',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => '1234567',
-            'email'       => 'not-an-email',
+            'address' => 'Addr',
+            'phone' => '1234567',
+            'email' => 'not-an-email',
         ];
 
         $response = $this->actingAs($this->admin)
@@ -247,12 +247,12 @@ class SettingAppControllerTest extends TestCase
         $file = UploadedFile::fake()->create('logo.txt');
 
         $data = [
-            'nama_app'    => 'Test App',
+            'nama_app' => 'Test App',
             'description' => 'Desc',
-            'address'     => 'Addr',
-            'phone'       => '1234567',
-            'email'       => 'test@example.com',
-            'image'       => $file,
+            'address' => 'Addr',
+            'phone' => '1234567',
+            'email' => 'test@example.com',
+            'image' => $file,
         ];
 
         $response = $this->actingAs($this->admin)

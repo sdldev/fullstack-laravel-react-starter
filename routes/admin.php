@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ApiTokenController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\SettingAppController;
@@ -32,4 +33,9 @@ Route::middleware(['auth', 'verified', 'can:admin'])->group(function () {
     Route::get('/admin/security-logs/archive/{archiveFilename}', [LogController::class, 'archiveShow'])->name('security-logs.archive');
     Route::post('/admin/security-logs/archive-now', [LogController::class, 'archiveNow'])->name('security-logs.archive-now');
     Route::get('/admin/security-logs/download/{archiveFilename}', [LogController::class, 'downloadArchive'])->name('security-logs.download');
+
+    // API Token Management
+    Route::get('/admin/api-tokens', [ApiTokenController::class, 'index'])->name('admin.api-tokens.index');
+    Route::post('/admin/api-tokens', [ApiTokenController::class, 'store'])->name('admin.api-tokens.store');
+    Route::delete('/admin/api-tokens/{token}', [ApiTokenController::class, 'destroy'])->name('admin.api-tokens.destroy');
 });
