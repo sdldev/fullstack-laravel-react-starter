@@ -18,7 +18,8 @@
 .phpunit.result.cache
 .script-dev-build.sh
 .script-dev-check.sh
-.script-dev-update.sh
+.script-install.sh
+.script-update.sh
 Homestead.json
 Homestead.yaml
 npm-debug.log
