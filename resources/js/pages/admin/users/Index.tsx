@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
+import { Edit, Eye, Plus, Trash2, User as UserIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import CreateUserModal from './CreateUserModal';
 import DeleteUserModal from './DeleteUserModal';
@@ -34,8 +34,12 @@ interface User {
     member_number: string | null;
     full_name: string | null;
     phone: string | null;
+    address: string | null;
     join_date: string | null;
+    note: string | null;
     is_active: boolean;
+    image: string | null;
+    image_url: string; // URL lengkap dengan fallback
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
@@ -110,7 +114,18 @@ export default function Index({ users, breadcrumbs }: UsersIndexProps) {
                         {users.data.map((user) => (
                             <TableRow key={user.id}>
                                 <TableCell>
-                                    {user.full_name || user.name}
+                                    <div className="flex items-center gap-2">
+                                        <img
+                                            src={user.image_url}
+                                            alt={user.full_name || user.name}
+                                            className="h-8 w-8 rounded object-cover"
+                                            onError={(e) => {
+                                                // Fallback if image fails to load
+                                                e.currentTarget.src = '/user.webp';
+                                            }}
+                                        />
+                                        <span>{user.full_name || user.name}</span>
+                                    </div>
                                 </TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>

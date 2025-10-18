@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin\Users;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -16,18 +17,34 @@ class UpdateUserRequest extends FormRequest
         $userId = $this->route('user')->id;
 
         return [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,'.$userId,
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'name')->ignore($userId),
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($userId),
+            ],
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'nullable|string|in:admin,user',
-            'member_number' => 'nullable|string|max:255|unique:users,member_number,'.$userId,
-            'full_name' => 'nullable|string|max:255',
-            'address' => 'nullable|string|max:500',
-            'phone' => 'nullable|string|max:20',
-            'join_date' => 'nullable|date',
+            'role' => 'required|string|in:admin,user',
+            'member_number' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('users', 'member_number')->ignore($userId),
+            ],
+            'full_name' => 'required|string|max:255',
+            'address' => 'required|string|max:500',
+            'phone' => 'required|string|max:20',
+            'join_date' => 'required|date',
             'note' => 'nullable|string|max:1000',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'is_active' => 'boolean',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240', // 10MB max
+            'is_active' => 'required|boolean',
         ];
     }
 
@@ -53,6 +70,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name.required' => ':attribute wajib diisi.',
+            'name.unique' => ':attribute sudah terdaftar.',
             'email.required' => ':attribute wajib diisi.',
             'email.email' => ':attribute harus berupa alamat email yang valid.',
             'email.unique' => ':attribute sudah terdaftar.',

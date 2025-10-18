@@ -18,8 +18,9 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useRef, useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { UploadCloud, X, RotateCw } from 'lucide-react';
 
 interface CreateUserModalProps {
     isOpen: boolean;
@@ -39,6 +40,7 @@ interface CreateUserData {
     join_date: string;
     note: string;
     is_active: boolean;
+    image: File | null;
 }
 
 export default function CreateUserModal({
@@ -59,14 +61,78 @@ export default function CreateUserModal({
             join_date: new Date().toISOString().split('T')[0],
             note: '',
             is_active: true,
+            image: null,
         });
+
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const [isDragOver, setIsDragOver] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        return () => {
+            if (imagePreview) {
+                URL.revokeObjectURL(imagePreview);
+            }
+        };
+    }, [imagePreview]);
+
+    const handleFileChange = (file: File | null) => {
+        if (!file) return;
+
+        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!validTypes.includes(file.type)) {
+            toast.error('Please upload a valid image file (JPG, PNG, GIF, WebP)');
+            return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error('File size must be less than 10MB');
+            return;
+        }
+
+        setData('image', file);
+        setImagePreview(URL.createObjectURL(file));
+    };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(true);
+    };
+
+    const handleDragLeave = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+    };
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragOver(false);
+
+        const file = e.dataTransfer.files?.[0];
+        if (file) {
+            handleFileChange(file);
+        }
+    };
+
+    const handleCancelImage = () => {
+        setImagePreview(null);
+        setData('image', null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
 
     const handleSubmit: FormEventHandler = (e) => {
         e.preventDefault();
         post('/admin/users', {
+            forceFormData: true,
             onSuccess: () => {
                 toast.success('User berhasil dibuat!');
                 reset();
+                setImagePreview(null);
                 onClose();
             },
             onError: () => {
@@ -78,6 +144,7 @@ export default function CreateUserModal({
 
     const handleClose = () => {
         reset();
+        setImagePreview(null);
         onClose();
     };
 
@@ -335,6 +402,94 @@ export default function CreateUserModal({
                                 </p>
                             )}
                         </div>
+                    </div>
+
+                    {/* Avatar Upload */}
+                    <div className="space-y-2">
+                        <Label htmlFor="image">Avatar Image</Label>
+                        <div
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            className={`rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
+                                isDragOver
+                                    ? 'border-blue-500 bg-blue-50 dark:border-blue-400 dark:bg-blue-950'
+                                    : 'border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-900'
+                            }`}
+                        >
+                            <Input
+                                id="image"
+                                ref={fileInputRef}
+                                type="file"
+                                accept="image/jpeg,image/png,image/gif,image/webp"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] || null;
+                                    if (file) {
+                                        handleFileChange(file);
+                                    }
+                                }}
+                                className="hidden"
+                            />
+
+                            {!imagePreview && (
+                                <div className="flex flex-col items-center justify-center space-y-3">
+                                    <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900/30">
+                                        <UploadCloud className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-gray-900 dark:text-white">
+                                            Drag & Drop your avatar here
+                                        </h4>
+                                        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                                            or click to select
+                                        </p>
+                                    </div>
+                                    <Label
+                                        htmlFor="image"
+                                        className="cursor-pointer"
+                                    >
+                                        <span className="inline-block rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                                            Browse Files
+                                        </span>
+                                    </Label>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        JPG, PNG, GIF, WebP • Max 10MB • 200x200px
+                                    </p>
+                                </div>
+                            )}
+
+                            {imagePreview && (
+                                <div className="flex items-start justify-between rounded-lg border border-green-300 bg-green-50 p-4 dark:border-green-600 dark:bg-green-900/20">
+                                    <div className="flex items-center gap-4">
+                                        <img
+                                            src={imagePreview}
+                                            alt="Avatar preview"
+                                            className="h-16 w-16 rounded-full object-cover"
+                                        />
+                                        <div className="text-left">
+                                            <p className="font-medium text-green-900 dark:text-green-100">
+                                                Avatar Selected
+                                            </p>
+                                            <p className="text-xs text-green-700 dark:text-green-300">
+                                                200x200px WebP (auto-converted)
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={handleCancelImage}
+                                        className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                                    >
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                        {errors.image && (
+                            <p className="text-sm text-destructive">
+                                {errors.image}
+                            </p>
+                        )}
                     </div>
 
                     {/* Is Active */}

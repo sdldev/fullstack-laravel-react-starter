@@ -14,6 +14,7 @@ import {
     Calendar,
     Edit,
     Hash,
+    Info,
     Mail,
     MapPin,
     Phone,
@@ -38,6 +39,8 @@ interface User {
     join_date: string | null;
     note: string | null;
     is_active: boolean;
+    image: string | null;
+    image_url: string; // URL lengkap dengan fallback
     email_verified_at: string | null;
     created_at: string;
     updated_at: string;
@@ -76,79 +79,87 @@ export default function ShowUserModal({
     return (
         <>
             <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-                <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+                <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
                     <DialogHeader>
-                        <DialogTitle className="text-2xl">
-                            {user.full_name || user.name}
-                        </DialogTitle>
-                        <DialogDescription>
-                            User details and information
-                        </DialogDescription>
+                        <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                                <img
+                                    src={user.image_url}
+                                    alt={user.full_name || user.name}
+                                    className="h-20 w-20 rounded-full object-cover ring-2 ring-border"
+                                    onError={(e) => {
+                                        e.currentTarget.src = '/user.webp';
+                                    }}
+                                />
+                                <div>
+                                    <DialogTitle className="text-2xl font-bold">
+                                        {user.full_name || user.name}
+                                    </DialogTitle>
+                                    <DialogDescription className="mt-1 flex items-center gap-2">
+                                        <Mail className="h-4 w-4" />
+                                        {user.email}
+                                    </DialogDescription>
+                                </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleEditUser}
+                                >
+                                    <Edit className="mr-2 h-4 w-4" />
+                                    Edit
+                                </Button>
+                                <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleDeleteUser}
+                                >
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                </Button>
+                            </div>
+                        </div>
                     </DialogHeader>
 
                     <div className="space-y-6">
-                        {/* Action Buttons */}
-                        <div className="flex justify-end gap-2">
-                            <Button variant="outline" onClick={handleEditUser}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit User
-                            </Button>
-                            <Button
-                                variant="destructive"
-                                onClick={handleDeleteUser}
-                            >
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete User
-                            </Button>
-                        </div>
-
-                        <div className="grid gap-6 md:grid-cols-3">
+                        <div className="grid gap-6 md:grid-cols-2">
                             {/* Basic Information */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-base">
                                         <UserIcon className="h-5 w-5" />
                                         Basic Information
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="grid gap-3">
-                                        <div className="flex items-center justify-between">
+                                <CardContent className="space-y-3">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between border-b pb-2">
                                             <span className="text-sm font-medium text-muted-foreground">
-                                                Name:
+                                                Username
                                             </span>
-                                            <span className="text-sm font-medium">
+                                            <span className="text-sm font-semibold">
                                                 {user.name}
                                             </span>
                                         </div>
 
                                         {user.full_name &&
                                             user.full_name !== user.name && (
-                                                <div className="flex items-center justify-between">
+                                                <div className="flex justify-between border-b pb-2">
                                                     <span className="text-sm font-medium text-muted-foreground">
-                                                        Full Name:
+                                                        Full Name
                                                     </span>
-                                                    <span className="text-sm font-medium">
+                                                    <span className="text-sm font-semibold">
                                                         {user.full_name}
                                                     </span>
                                                 </div>
                                             )}
 
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex justify-between border-b pb-2">
                                             <span className="text-sm font-medium text-muted-foreground">
-                                                Email:
-                                            </span>
-                                            <div className="flex items-center gap-2">
-                                                <Mail className="h-4 w-4 text-muted-foreground" />
-                                                <span className="text-sm font-medium">
-                                                    {user.email}
-                                                </span>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm font-medium text-muted-foreground">
-                                                Email Verified:
+                                                Email Status
                                             </span>
                                             <Badge
                                                 variant={
@@ -164,13 +175,13 @@ export default function ShowUserModal({
                                         </div>
 
                                         {user.phone && (
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex justify-between border-b pb-2">
                                                 <span className="text-sm font-medium text-muted-foreground">
-                                                    Phone:
+                                                    Phone
                                                 </span>
                                                 <div className="flex items-center gap-2">
-                                                    <Phone className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm font-medium">
+                                                    <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                                                    <span className="text-sm font-semibold">
                                                         {user.phone}
                                                     </span>
                                                 </div>
@@ -178,13 +189,13 @@ export default function ShowUserModal({
                                         )}
 
                                         {user.address && (
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex justify-between border-b pb-2">
                                                 <span className="text-sm font-medium text-muted-foreground">
-                                                    Address:
+                                                    Address
                                                 </span>
                                                 <div className="flex items-center gap-2">
-                                                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm font-medium">
+                                                    <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                                                    <span className="text-sm font-semibold">
                                                         {user.address}
                                                     </span>
                                                 </div>
@@ -194,49 +205,19 @@ export default function ShowUserModal({
                                 </CardContent>
                             </Card>
 
-                            {/* Additional Information */}
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
-                                        <StickyNote className="h-5 w-5" />
-                                        Additional Information
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="grid gap-3">
-                                        {user.note && (
-                                            <div className="space-y-2">
-                                                <span className="text-sm font-medium text-muted-foreground">
-                                                    Note:
-                                                </span>
-                                                <p className="rounded-md bg-muted p-3 text-sm">
-                                                    {user.note}
-                                                </p>
-                                            </div>
-                                        )}
-
-                                        {!user.note && (
-                                            <p className="text-sm text-muted-foreground">
-                                                No additional notes.
-                                            </p>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
                             {/* Role & Status */}
                             <Card>
                                 <CardHeader>
-                                    <CardTitle className="flex items-center gap-2">
+                                    <CardTitle className="flex items-center gap-2 text-base">
                                         <Shield className="h-5 w-5" />
                                         Role & Status
                                     </CardTitle>
                                 </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="grid gap-3">
-                                        <div className="flex items-center justify-between">
+                                <CardContent className="space-y-3">
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between border-b pb-2">
                                             <span className="text-sm font-medium text-muted-foreground">
-                                                Role:
+                                                Role
                                             </span>
                                             <Badge
                                                 variant={
@@ -249,9 +230,9 @@ export default function ShowUserModal({
                                             </Badge>
                                         </div>
 
-                                        <div className="flex items-center justify-between">
+                                        <div className="flex justify-between border-b pb-2">
                                             <span className="text-sm font-medium text-muted-foreground">
-                                                Status:
+                                                Status
                                             </span>
                                             <Badge
                                                 variant={
@@ -267,13 +248,13 @@ export default function ShowUserModal({
                                         </div>
 
                                         {user.member_number && (
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex justify-between border-b pb-2">
                                                 <span className="text-sm font-medium text-muted-foreground">
-                                                    Member Number:
+                                                    Member No.
                                                 </span>
                                                 <div className="flex items-center gap-2">
-                                                    <Hash className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm font-medium">
+                                                    <Hash className="h-3.5 w-3.5 text-muted-foreground" />
+                                                    <span className="text-sm font-semibold">
                                                         {user.member_number}
                                                     </span>
                                                 </div>
@@ -281,13 +262,13 @@ export default function ShowUserModal({
                                         )}
 
                                         {user.join_date && (
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex justify-between border-b pb-2">
                                                 <span className="text-sm font-medium text-muted-foreground">
-                                                    Join Date:
+                                                    Join Date
                                                 </span>
                                                 <div className="flex items-center gap-2">
-                                                    <Calendar className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm font-medium">
+                                                    <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                                                    <span className="text-sm font-semibold">
                                                         {new Date(
                                                             user.join_date,
                                                         ).toLocaleDateString()}
@@ -300,41 +281,61 @@ export default function ShowUserModal({
                             </Card>
                         </div>
 
+                        {/* Notes Section (Full Width if exists) */}
+                        {user.note && (
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle className="flex items-center gap-2 text-base">
+                                        <StickyNote className="h-5 w-5" />
+                                        Notes
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="rounded-md bg-muted p-4 text-sm leading-relaxed">
+                                        {user.note}
+                                    </p>
+                                </CardContent>
+                            </Card>
+                        )}
+
                         {/* System Information */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>System Information</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base">
+                                    <Info className="h-5 w-5" />
+                                    System Information
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="grid gap-4 md:grid-cols-3">
-                                    <div className="space-y-2">
-                                        <span className="text-sm font-medium text-muted-foreground">
-                                            User ID:
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-muted-foreground">
+                                            User ID
                                         </span>
-                                        <p className="text-sm font-medium">
+                                        <p className="text-sm font-semibold">
                                             #{user.id}
                                         </p>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <span className="text-sm font-medium text-muted-foreground">
-                                            Created:
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-muted-foreground">
+                                            Created At
                                         </span>
                                         <p className="text-sm">
                                             {new Date(
                                                 user.created_at,
-                                            ).toLocaleString()}
+                                            ).toLocaleString('id-ID')}
                                         </p>
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <span className="text-sm font-medium text-muted-foreground">
-                                            Last Updated:
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-medium text-muted-foreground">
+                                            Last Updated
                                         </span>
                                         <p className="text-sm">
                                             {new Date(
                                                 user.updated_at,
-                                            ).toLocaleString()}
+                                            ).toLocaleString('id-ID')}
                                         </p>
                                     </div>
                                 </div>
@@ -344,31 +345,25 @@ export default function ShowUserModal({
                         {/* Quick Actions */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Quick Actions</CardTitle>
+                                <CardTitle className="text-base">
+                                    Quick Actions
+                                </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="flex flex-wrap gap-3">
-                                    <Button
-                                        variant="outline"
-                                        onClick={handleEditUser}
-                                    >
-                                        <Edit className="mr-2 h-4 w-4" />
-                                        Edit User
-                                    </Button>
-
                                     <Button variant="outline" asChild>
-                                        <Link href={`mailto:${user.email}`}>
+                                        <a href={`mailto:${user.email}`}>
                                             <Mail className="mr-2 h-4 w-4" />
                                             Send Email
-                                        </Link>
+                                        </a>
                                     </Button>
 
                                     {user.phone && (
                                         <Button variant="outline" asChild>
-                                            <Link href={`tel:${user.phone}`}>
+                                            <a href={`tel:${user.phone}`}>
                                                 <Phone className="mr-2 h-4 w-4" />
                                                 Call User
-                                            </Link>
+                                            </a>
                                         </Button>
                                     )}
 

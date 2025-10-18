@@ -7,24 +7,21 @@ use App\Http\Requests\Admin\Users\StoreUserRequest;
 use App\Http\Requests\Admin\Users\UpdateUserRequest;
 use App\Models\User;
 use App\Services\ImageService;
+use App\Services\CacheService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class UserController extends Controller
 {
-    public function __construct(private ImageService $imageService) {}
+    public function __construct(private ImageService $imageService, private CacheService $cacheService) {}
 
     public function index(Request $request)
     {
         $perPage = (int) $request->get('per_page', 10);
         $page = (int) $request->get('page', 1);
 
-        // Cache key with pagination params for unique caching per page
-        $cacheKey = "users_list_page_{$page}_per_{$perPage}";
-
         // Cache for 5 minutes (300 seconds) to reduce database load
-        $users = Cache::remember($cacheKey, 300, function () use ($perPage) {
+        $users = $this->cacheService->rememberUsersList($page, $perPage, 300, function () use ($perPage) {
             return User::select([
                 'id',
                 'name',
@@ -35,8 +32,9 @@ class UserController extends Controller
                 'phone',
                 'join_date',
                 'is_active',
+                'image', // Include image for avatar display
                 'created_at',
-                // Exclude: password, address, note, image, updated_at, etc.
+                // Exclude: password, address, note, updated_at, etc.
             ])
                 ->latest('created_at')
                 ->paginate($perPage);
@@ -76,8 +74,8 @@ class UserController extends Controller
 
         User::create($data);
 
-        // Clear all users cache to show fresh data
-        Cache::flush();
+    // Clear users list cache to show fresh data
+    $this->cacheService->clearUsersList();
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
@@ -97,10 +95,15 @@ class UserController extends Controller
         // User avatars: 200x200px, stored in 'users' folder
         if ($request->hasFile('image')) {
             try {
+                // Delete old image if exists
+                // Database stores filename only: avatar-123.webp
+                // Need full path for delete: users/avatar-123.webp
                 if ($user->image) {
-                    $this->imageService->deleteImageFile($user->image);
+                    $fullPath = 'users/'.$user->image;
+                    $this->imageService->deleteImageFile($fullPath);
                 }
 
+                // Process new image (returns filename only)
                 $data['image'] = $this->imageService->processImageWithDimensions(
                     file: $request->file('image'),
                     storagePath: 'users',
@@ -112,12 +115,16 @@ class UserController extends Controller
             } catch (\Exception $e) {
                 return back()->withErrors(['image' => $e->getMessage()]);
             }
+        } else {
+            // If no new image uploaded, don't change the image field
+            // This prevents accidentally setting image to null
+            unset($data['image']);
         }
 
         $user->update($data);
 
-        // Clear cache to reflect updated data
-        Cache::flush();
+    // Clear users list cache keys (tags or explicit keys depending on driver)
+    $this->cacheService->clearUsersList();
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
@@ -129,16 +136,24 @@ class UserController extends Controller
             abort(403, 'You cannot delete your own account.');
         }
 
-        // Delete avatar image
+        // Delete avatar image with full path
         if ($user->image) {
-            $this->imageService->deleteImageFile($user->image);
+            $fullPath = 'users/'.$user->image;
+            $this->imageService->deleteImageFile($fullPath);
         }
 
         $user->delete();
 
-        // Clear cache to reflect deletion
-        Cache::flush();
+    // Clear users list cache keys
+    $this->cacheService->clearUsersList();
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
+
+    /**
+     * Clear all users list cache keys
+     * Cache pattern: users_list_page_{page}_per_{perPage}
+     */
+    // The users cache clearing is now handled by App\Services\CacheService
+    // keeping this controller focused on request handling and persistence.
 }

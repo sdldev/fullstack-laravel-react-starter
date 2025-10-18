@@ -157,6 +157,25 @@ Welcome to the comprehensive documentation for the Fullstack Laravel React Start
 - [Adding Site Feature](architecture/ADMIN_SITE_SEPARATION.md#adding-site-feature)
 - [Extension Points](architecture/OVERVIEW.md#extension-points)
 
+### Features Documentation
+
+**Image Management**:
+- [User Avatar Feature](features/USER_AVATAR_FEATURE.md) - Complete avatar upload implementation
+- [User Management Improvements](features/USER_MANAGEMENT_IMPROVEMENTS.md) - Safe update pattern, flexible validation, improved UI
+- [Robust Image Handling](features/ROBUST_IMAGE_HANDLING.md) - Model accessor dengan fallback ke default avatar
+- [Image Service Usage Guide](../IMAGE_SERVICE_USAGE.md) - Generic image service for all entities
+- [Image Upload Security](../IMAGE_UPLOAD_SECURITY.md) - 5-layer security validation
+
+**Key Features**:
+- WebP conversion with 73-80% file size reduction
+- Drag & drop upload UI with preview
+- 5-layer security validation (MIME, Extension, Content, Processing, Size)
+- Generic ImageService for reuse across entities
+- Safe update pattern (data tidak hilang saat partial update)
+- Flexible validation (sometimes|required)
+- Robust image handling dengan default avatar fallback
+- Two-layer error handling (backend accessor + frontend onError)
+
 ### Deployment
 
 **Pre-Deployment**:

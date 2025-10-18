@@ -91,6 +91,9 @@ test('admin can update user', function () {
         'role' => 'admin',
         'member_number' => 'NEW001',
         'full_name' => 'Updated Full Name',
+        'address' => 'Updated Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
         'is_active' => false,
     ];
 
@@ -178,12 +181,24 @@ test('admin can update user with partial data', function () {
         'name' => 'Original Name',
         'email' => 'original@example.com',
         'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Original Full Name',
+        'address' => 'Original Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
     ]);
 
     $updateData = [
         'name' => 'Updated Name',
         'email' => 'updated@example.com',
-        // Only updating name and email, leaving other fields unchanged
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Original Full Name',
+        'address' => 'Original Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+        'is_active' => true,
+        // All fields are sent, but some values remain unchanged
     ];
 
     $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
@@ -193,7 +208,7 @@ test('admin can update user with partial data', function () {
         'id' => $user->id,
         'name' => 'Updated Name',
         'email' => 'updated@example.com',
-        'role' => 'user', // Should remain unchanged
+        'role' => 'user', // Remains unchanged
     ]);
 });
 
@@ -201,11 +216,24 @@ test('admin can update user password', function () {
     $admin = User::factory()->create(['role' => 'admin']);
     $user = User::factory()->create([
         'password' => bcrypt('oldpassword'),
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
     ]);
 
     $updateData = [
         'name' => $user->name,
         'email' => $user->email,
+        'role' => $user->role,
+        'member_number' => $user->member_number,
+        'full_name' => $user->full_name,
+        'address' => $user->address,
+        'phone' => $user->phone,
+        'join_date' => $user->join_date,
+        'is_active' => true,
         'password' => 'newpassword123',
         'password_confirmation' => 'newpassword123',
     ];
@@ -321,13 +349,28 @@ test('user creation validates role values', function () {
 
 test('user update validates email uniqueness excluding current user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $user1 = User::factory()->create(['email' => 'user1@example.com']);
+    $user1 = User::factory()->create([
+        'email' => 'user1@example.com',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'User One',
+        'address' => 'Address 1',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+    ]);
     $user2 = User::factory()->create(['email' => 'user2@example.com']);
 
     // Update user1 with user2's email should fail
     $updateData = [
         'name' => $user1->name,
         'email' => 'user2@example.com', // Duplicate with user2
+        'role' => $user1->role,
+        'member_number' => $user1->member_number,
+        'full_name' => $user1->full_name,
+        'address' => $user1->address,
+        'phone' => $user1->phone,
+        'join_date' => $user1->join_date,
+        'is_active' => true,
     ];
 
     $response = $this->actingAs($admin)->put("/admin/users/{$user1->id}", $updateData);
@@ -337,12 +380,27 @@ test('user update validates email uniqueness excluding current user', function (
 
 test('user update allows same email for same user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $user = User::factory()->create(['email' => 'user@example.com']);
+    $user = User::factory()->create([
+        'email' => 'user@example.com',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+    ]);
 
     // Update user with their own email should succeed
     $updateData = [
         'name' => 'Updated Name',
         'email' => 'user@example.com', // Same email
+        'role' => $user->role,
+        'member_number' => $user->member_number,
+        'full_name' => $user->full_name,
+        'address' => $user->address,
+        'phone' => $user->phone,
+        'join_date' => $user->join_date,
+        'is_active' => true,
     ];
 
     $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
@@ -474,13 +532,24 @@ test('user update allows nullable fields', function () {
     $user = User::factory()->create([
         'role' => 'user',
         'member_number' => 'MEM001',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
     ]);
 
-    // Update with only required fields (name and email)
+    // Update with all required fields, note is nullable
     $updateData = [
         'name' => 'Updated Name',
         'email' => 'updated@example.com',
-        // All other fields are nullable in UpdateUserRequest
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+        'is_active' => true,
+        // Note is nullable - not sending it
     ];
 
     $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
@@ -495,14 +564,27 @@ test('user update allows nullable fields', function () {
 
 test('user update validates member_number uniqueness', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $user1 = User::factory()->create(['member_number' => 'MEM001']);
+    $user1 = User::factory()->create([
+        'member_number' => 'MEM001',
+        'role' => 'user',
+        'full_name' => 'User One',
+        'address' => 'Address 1',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+    ]);
     $user2 = User::factory()->create(['member_number' => 'MEM002']);
 
     // Try to update user1 with user2's member_number
     $updateData = [
         'name' => $user1->name,
         'email' => $user1->email,
+        'role' => $user1->role,
         'member_number' => 'MEM002', // Duplicate with user2
+        'full_name' => $user1->full_name,
+        'address' => $user1->address,
+        'phone' => $user1->phone,
+        'join_date' => $user1->join_date,
+        'is_active' => true,
     ];
 
     $response = $this->actingAs($admin)->put("/admin/users/{$user1->id}", $updateData);
@@ -512,13 +594,26 @@ test('user update validates member_number uniqueness', function () {
 
 test('user update allows same member_number for same user', function () {
     $admin = User::factory()->create(['role' => 'admin']);
-    $user = User::factory()->create(['member_number' => 'MEM001']);
+    $user = User::factory()->create([
+        'member_number' => 'MEM001',
+        'role' => 'user',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+    ]);
 
     // Update user with their own member_number
     $updateData = [
         'name' => 'Updated Name',
         'email' => $user->email,
+        'role' => $user->role,
         'member_number' => 'MEM001', // Same member_number
+        'full_name' => $user->full_name,
+        'address' => $user->address,
+        'phone' => $user->phone,
+        'join_date' => $user->join_date,
+        'is_active' => true,
     ];
 
     $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
@@ -527,5 +622,92 @@ test('user update allows same member_number for same user', function () {
     $this->assertDatabaseHas('users', [
         'id' => $user->id,
         'member_number' => 'MEM001',
+    ]);
+});
+
+test('user creation validates name uniqueness', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $existingUser = User::factory()->create(['name' => 'johndoe']);
+
+    $userData = [
+        'name' => 'johndoe', // Duplicate name
+        'email' => 'newemail@example.com',
+        'password' => 'password123',
+        'password_confirmation' => 'password123',
+        'role' => 'user',
+        'member_number' => 'MEM999',
+        'full_name' => 'John Doe',
+        'address' => '123 Test Street',
+        'phone' => '+1234567890',
+    ];
+
+    $response = $this->actingAs($admin)->post('/admin/users', $userData);
+
+    $response->assertSessionHasErrors('name');
+});
+
+test('user update validates name uniqueness excluding current user', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $user1 = User::factory()->create([
+        'name' => 'user1name',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'User One',
+        'address' => 'Address 1',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+    ]);
+    $user2 = User::factory()->create(['name' => 'user2name']);
+
+    // Try to update user1 with user2's name
+    $updateData = [
+        'name' => 'user2name', // Duplicate with user2
+        'email' => $user1->email,
+        'role' => $user1->role,
+        'member_number' => $user1->member_number,
+        'full_name' => $user1->full_name,
+        'address' => $user1->address,
+        'phone' => $user1->phone,
+        'join_date' => $user1->join_date,
+        'is_active' => true,
+    ];
+
+    $response = $this->actingAs($admin)->put("/admin/users/{$user1->id}", $updateData);
+
+    $response->assertSessionHasErrors('name');
+});
+
+test('user update allows same name for same user', function () {
+    $admin = User::factory()->create(['role' => 'admin']);
+    $user = User::factory()->create([
+        'name' => 'username123',
+        'role' => 'user',
+        'member_number' => 'MEM001',
+        'full_name' => 'Test User',
+        'address' => 'Test Address',
+        'phone' => '081234567890',
+        'join_date' => '2024-01-01',
+    ]);
+
+    // Update user with their own name (should succeed)
+    $updateData = [
+        'name' => 'username123', // Same name
+        'email' => 'newemail@example.com',
+        'role' => $user->role,
+        'member_number' => $user->member_number,
+        'full_name' => $user->full_name,
+        'address' => $user->address,
+        'phone' => $user->phone,
+        'join_date' => $user->join_date,
+        'is_active' => true,
+    ];
+
+    $response = $this->actingAs($admin)->put("/admin/users/{$user->id}", $updateData);
+
+    $response->assertRedirect('/admin/users');
+    $this->assertDatabaseHas('users', [
+        'id' => $user->id,
+        'name' => 'username123',
+        'email' => 'newemail@example.com',
     ]);
 });

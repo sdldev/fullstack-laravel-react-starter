@@ -14,7 +14,7 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|string|in:admin,user',
@@ -51,6 +51,7 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name.required' => ':attribute wajib diisi.',
+            'name.unique' => ':attribute sudah terdaftar.',
             'email.required' => ':attribute wajib diisi.',
             'email.email' => ':attribute harus berupa alamat email yang valid.',
             'email.unique' => ':attribute sudah terdaftar.',

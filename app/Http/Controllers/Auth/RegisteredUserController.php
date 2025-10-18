@@ -39,6 +39,13 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password,
+            // Auto-generate required member_number for compatibility with current schema
+            'member_number' => User::generateMemberNumber(),
+            'full_name' => $request->name,
+            'role' => 'user',
+            'address' => '',
+            'phone' => '',
+            'is_active' => true,
         ]);
 
         event(new Registered($user));

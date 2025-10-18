@@ -30,12 +30,55 @@ class User extends Authenticatable
         'is_active',
     ];
 
+    /**
+     * Get the user's image URL with fallback to default avatar.
+     * 
+     * If user has no image, return default user.svg from public folder.
+     * If user has image, return full storage URL.
+     * 
+     * Note: Image is stored as 'users/avatar-xxx.webp' in database,
+     * so we prepend 'storage/' to get full public URL.
+     */
+    public function getImageUrlAttribute(): string
+    {
+        if (empty($this->attributes['image'])) {
+            return asset('user.svg');
+        }
+
+        // Image stored as: users/avatar-xxx.webp
+        // Return: /storage/users/avatar-xxx.webp
+        return asset('storage/' . $this->attributes['image']);
+    }
+
+    /**
+     * Generate a unique member number for new users.
+     * Format: M + 4 digits (e.g. M0001). Falls back to a random string if collisions persist.
+     */
+    public static function generateMemberNumber(): string
+    {
+        for ($i = 0; $i < 10; $i++) {
+            $candidate = 'M' . str_pad((string) random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+
+            if (! self::where('member_number', $candidate)->exists()) {
+                return $candidate;
+            }
+        }
+
+        // Fallback: unlikely collision case
+        return 'M' . strtoupper(bin2hex(random_bytes(3)));
+    }
+
     protected $hidden = [
         'password',
         'two_factor_secret',
         'two_factor_recovery_codes',
         'remember_token',
     ];
+
+    /**
+     * Append image_url to JSON serialization
+     */
+    protected $appends = ['image_url'];
 
     protected function casts(): array
     {

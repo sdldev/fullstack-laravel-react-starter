@@ -366,7 +366,11 @@ class ImageService
             // Clean up temporary file
             unlink($tempPath);
 
-            return $result ? $filePath : false;
+            // Return only filename, NOT full path
+            // Database stores: avatar-xyz-123.webp
+            // Storage location: storage/app/public/users/avatar-xyz-123.webp
+            // Public URL: storage/users/avatar-xyz-123.webp
+            return $result ? $filename : false;
 
         } catch (\Exception $e) {
             \Log::error('Error processing image: '.$e->getMessage());
