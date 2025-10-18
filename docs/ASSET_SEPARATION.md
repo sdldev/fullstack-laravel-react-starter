@@ -9,6 +9,53 @@ Repository ini menggunakan pemisahan asset yang jelas antara **Admin Dashboard**
 3. **Route detection otomatis** melalui middleware
 4. **Page components terpisah** per namespace
 
+## Diagram Alur
+
+```
+Request (/admin/users)
+    ↓
+HandleInertiaRequests Middleware
+    ↓
+rootView() method
+    ↓
+Is route 'admin' or 'admin/*'? → YES
+    ↓
+Return 'admin/app'
+    ↓
+Load: resources/views/admin/app.blade.php
+    ↓
+@vite(['resources/js/entries/admin.tsx'])
+    ↓
+Admin Entry Point:
+  - Loads Toaster
+  - Title: "Page - Admin - AppName"
+  - Renders admin/* pages
+    ↓
+Final Output: Admin Dashboard with admin.js bundle
+
+
+Request (/, /dashboard, /login, /settings/*)
+    ↓
+HandleInertiaRequests Middleware
+    ↓
+rootView() method
+    ↓
+Is route 'admin' or 'admin/*'? → NO
+    ↓
+Return 'site/app'
+    ↓
+Load: resources/views/site/app.blade.php
+    ↓
+@vite(['resources/js/entries/site.tsx'])
+    ↓
+Site Entry Point:
+  - No Toaster
+  - Title: "Page - AppName"
+  - Renders site/*, auth/*, settings/*, dashboard pages
+    ↓
+Final Output: Site with site.js bundle
+```
+
 ## Struktur File
 
 ### Backend
@@ -143,6 +190,50 @@ public/build/
 2. **Better Caching**: Admin updates tidak mempengaruhi site bundle
 3. **Parallel Loading**: Browser bisa download chunks secara parallel
 4. **Optimized Chunks**: Vendor code (React, Inertia) di-share antar bundles
+
+## Verifikasi Build Output
+
+Untuk memastikan pemisahan asset berfungsi dengan baik:
+
+### 1. Development Mode
+
+```bash
+npm run dev
+```
+
+Akses halaman dan periksa di browser DevTools:
+- **Admin pages** (`/admin/dashboard`): Harus load `admin.tsx` entry
+- **Site pages** (`/`, `/dashboard`): Harus load `site.tsx` entry
+
+### 2. Production Build
+
+```bash
+npm run build
+```
+
+Output yang diharapkan:
+```
+public/build/assets/
+├── admin-[hash].js          # Admin bundle (~200-300KB)
+├── site-[hash].js           # Site bundle (~150-200KB)
+├── vendor-[hash].js         # Shared vendors (React, Inertia)
+├── ui-[hash].js             # Shared UI components (Radix)
+└── [page-specific].js       # Code-split pages
+```
+
+### 3. Bundle Analysis
+
+Untuk menganalisis ukuran bundle:
+
+```bash
+# Install analyzer
+npm install --save-dev rollup-plugin-visualizer
+
+# Build dengan analisis (add to vite.config.ts)
+# visualizer({ open: true })
+
+npm run build
+```
 
 ## Testing
 
