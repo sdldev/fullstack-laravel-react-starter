@@ -9,4 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Schedule activity log cleanup daily at midnight
-Schedule::command('activitylog:clean')->daily();
+Schedule::command('activitylog:clean')->monthly();
