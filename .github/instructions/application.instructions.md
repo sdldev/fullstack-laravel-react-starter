@@ -6,7 +6,6 @@ applyTo: '**'
 Tujuan: Panduan ringkas, preskriptif, dan mesin‑readable untuk GitHub Copilot saat menghasilkan atau memodifikasi kode dalam repository Laravel 12 + React + Inertia yang memakai shadcn/ui, dengan pemisahan jelas antara Admin (dashboard) dan Site (public).
 
 Bahasa: Bahasa Indonesia (penjelasan). Kode tetap dalam bahasa Inggris.  
-Path frontend utama: resources/js/pages (bukan resources/js/src). Vite entry files: resources/js/entries.
 
 --------------------------------------------------------------------------------
 Aturan Utama (MUST)

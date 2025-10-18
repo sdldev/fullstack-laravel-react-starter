@@ -7,9 +7,14 @@ This is a Laravel 12 + React 19 + Inertia.js fullstack application with strict s
 ### Key Structural Patterns
 
 **Admin vs Site Separation:**
+**API**
+- **Api routes**: `routes/api.php` with `middleware(['auth:sanctum', 'verified'])`
 - **Admin routes**: `routes/admin.php` with `middleware(['auth', 'verified', 'can:admin'])`
 - **Site routes**: `routes/web.php` for public access
 - **Controllers**: `app/Http/Controllers/Admin/*` vs `app/Http/Controllers/Site/*`
+- **Admin Requests**: `app/Http/Requests/Admin/*` vs `app/Http/Requests/Site/*`
+- **Admin Views**: `resources/js/pages/admin/*` vs `resources/js/pages/site/*`
+
 - **Frontend pages**: `resources/js/pages/admin/*` vs `resources/js/pages/site/*`
 - **Vite entries**: `resources/js/entries/admin.tsx` vs `resources/js/entries/site.tsx`
 
