@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use \App\Http\Requests\Admin\Users\StoreUserRequest;
-use \App\Http\Requests\Admin\Users\UpdateUserRequest;
+use App\Http\Requests\Admin\Users\StoreUserRequest;
+use App\Http\Requests\Admin\Users\UpdateUserRequest;
 use App\Services\ImageUploadService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
