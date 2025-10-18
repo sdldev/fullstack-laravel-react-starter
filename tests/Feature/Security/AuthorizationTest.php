@@ -1,9 +1,6 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-
-uses(RefreshDatabase::class);
 
 test('user cannot access other users profile data directly', function () {
     $user1 = User::factory()->create(['role' => 'user']);
