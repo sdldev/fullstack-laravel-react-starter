@@ -19,6 +19,23 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
+     * Determine the current asset version.
+     * Dynamically select the root view based on the request path.
+     *
+     * @return string
+     */
+    public function rootView(Request $request): string
+    {
+        // Use admin template for admin routes
+        if ($request->is('admin') || $request->is('admin/*')) {
+            return 'admin/app';
+        }
+
+        // Use site template for all other routes
+        return 'site/app';
+    }
+
+    /**
      * Determines the current asset version.
      *
      * @see https://inertiajs.com/asset-versioning

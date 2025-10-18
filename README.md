@@ -308,6 +308,22 @@ Project ini memiliki comprehensive Copilot instructions di `.github/copilot-inst
 
 Instruksi ini memastikan Copilot menghasilkan code yang comply dengan semua standards.
 
+### 📚 Asset Separation
+
+Project ini menggunakan **pemisahan asset yang ketat** antara Admin dan Site:
+
+- **Admin**: Entry point terpisah di `resources/js/entries/admin.tsx`
+- **Site**: Entry point terpisah di `resources/js/entries/site.tsx`  
+- **Auto-detection**: Middleware otomatis memilih template berdasarkan route
+- **Optimized bundles**: Vite menghasilkan bundle terpisah untuk performa optimal
+
+**Untuk detail lengkap**, lihat: [`docs/ASSET_SEPARATION.md`](docs/ASSET_SEPARATION.md)
+
+**Verifikasi setup**:
+```bash
+bash scripts/verify-asset-separation.sh
+```
+
 ## 🎨 UI Components
 
 Menggunakan **shadcn/ui** untuk component library yang:

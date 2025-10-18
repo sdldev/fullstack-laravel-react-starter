@@ -1,3 +1,11 @@
+{{--
+    DEPRECATED: This template is kept for backwards compatibility only.
+    
+    Admin routes should now use: resources/views/admin/app.blade.php
+    Site routes should now use: resources/views/site/app.blade.php
+    
+    The HandleInertiaRequests middleware automatically selects the correct template.
+--}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" @class(['dark' => ($appearance ?? 'system') == 'dark'])>
     <head>
