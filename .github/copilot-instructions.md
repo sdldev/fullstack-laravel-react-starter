@@ -10,7 +10,7 @@ What you must follow (short rules for an AI code agent):
 1. Keep Admin vs Site separation: add new admin features under `app/Http/Controllers/Admin` and `resources/js/pages/admin`.
 2. Use FormRequest classes for validation in `app/Http/Requests/Admin/*` or `Site/*`. Put authorization logic in `authorize()`.
 3. Follow the ImageService pattern: controllers pass storage path and dimensions to `App\Services\ImageService::processImageWithDimensions(...)`. The service returns the stored filename (DB stores filename only). Example use: `storagePath: 'users', width:200, height:200, prefix:'avatar'` in `UserController`.
-4. Caching: avoid `Cache::flush()`. Use targeted keys or tags. There is a central `App\Services\CacheService` used for users list caching (`users_list_page_{page}_per_{perPage}`) and tag-aware invalidation.
+4. Caching: avoid `Cache::flush()`. Use targeted keys or tags. There is a central `App\Services\CacheService` used for users list caching (`users_list_page_{page}_per_{perPage}`) and tag-aware invalidation. Use the `cache_service()` helper function for convenient access to CacheService methods.
 5. Tests: use Pest / RefreshDatabase trait. For admin tests use `actingAs($admin)` where `$admin = User::factory()->create(['role' => 'admin'])`.
 6. Static checks: run Pint (PHP formatting), PHPStan (level 5), and ESLint/TypeScript checks before PRs. Commands:
 
@@ -24,6 +24,7 @@ npx eslint . --fix
 Examples & file pointers (copyable patterns):
 
 - User list caching (controller): `app/Http/Controllers/Admin/UserController.php` uses `CacheService::rememberUsersList($page,$perPage,300, fn() => User::select(...)->paginate($perPage))` and `CacheService::clearUsersList()` after creates/updates/deletes.
+- Cache helper function: Use `cache_service()` for convenient access. Example: `cache_service()->rememberUsersList($page, $perPage, 300, $callback)` or `cache_service()->clearUsersList()`.
 - Image processing (service): `app/Services/ImageService.php` — validate (multiple checks), convert to WebP, resize (cover), return filename only; deletion expects disk path like `users/filename.webp`.
 - Model accessor: `App\Models\User::getImageUrlAttribute()` returns `asset('storage/' . $this->attributes['image'])` with a fallback `asset('user.svg')`.
 
@@ -32,9 +33,53 @@ When making changes, be explicit in commits/PR descriptions: list files changed,
 If you need clarification about a design decision (e.g. whether to use cache tags in production), ask before making broad changes.
 
 ---
-Please review this shorter guidance. Tell me if you want me to expand any section (tests, caching, image handling, or frontend patterns) or to open a PR with the change.
 
-2. **Variable Type Casting**
+## Helper Functions
+
+This application includes global helper functions for common operations:
+
+### Cache Helper
+
+**Function**: `cache_service()`
+**Purpose**: Provides convenient access to the centralized CacheService instance.
+**Location**: `app/helpers.php` (autoloaded via composer.json)
+
+**Usage Examples**:
+```php
+// In a controller or service
+$users = cache_service()->rememberUsersList($page, $perPage, 300, function() {
+    return User::select(['id', 'name', 'email'])->paginate($perPage);
+});
+
+// Clear cache after mutations
+cache_service()->clearUsersList();
+
+// Check cache driver capabilities
+if (cache_service()->supportsTags()) {
+    // Use tag-based caching
+}
+```
+
+**Benefits**:
+- No need to inject CacheService in every controller
+- Cleaner, more Laravel-idiomatic code
+- Same functionality as directly using CacheService
+
+**When to Use**:
+- For one-off cache operations in controllers/services
+- When dependency injection feels too heavy
+- In routes/closures where DI is less convenient
+
+**When to Use Dependency Injection Instead**:
+- When class needs CacheService in multiple methods
+- For better testability with mocking
+- When following strict SOLID principles
+
+---
+
+## PHPStan & Type Safety
+
+1. **Variable Type Casting**
    - Cast regex matches and option values explicitly
    - Use `(int)`, `(string)`, `(float)`, `(bool)` casts when needed
    - Example:

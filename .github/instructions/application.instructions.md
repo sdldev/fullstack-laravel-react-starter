@@ -111,7 +111,7 @@ Frontend patterns & UI behavior (MUST / SHOULD)
 Performance & Security reminders (Copilot must surface warnings)
 - Eager-load relations for lists (->with('user','paymentCategory')).
 - Add DB indexes for frequently queried columns (hint in migration comments).
-- Cache expensive queries using Cache::remember when business allows.
+- Cache expensive queries using Cache::remember when business allows, or use cache_service() helper for centralized cache management.
 - When returning paginator labels that include HTML, warn about XSS and prefer numeric pagination or server-side sanitization.
 - For destructive actions ensure policy check before delete in controller/service.
 
@@ -176,6 +176,32 @@ export default function Index() {
   return <div>{/* responsive table/cards + modals */}</div>;
 }
 ```
+
+--------------------------------------------------------------------------------
+Helper Functions (Global utilities)
+
+The application provides global helper functions for common operations:
+
+1. **cache_service()** - Access to centralized CacheService
+   ```php
+   // Usage in controllers/services
+   $users = cache_service()->rememberUsersList($page, $perPage, 300, function() {
+       return User::paginate($perPage);
+   });
+   
+   // Clear cache after mutations
+   cache_service()->clearUsersList();
+   ```
+
+2. **When to use helpers vs DI**
+   - Use helpers: one-off operations, routes, closures, quick access
+   - Use DI: multiple method calls, better testability, strict SOLID adherence
+   
+3. **Adding new helpers**
+   - Add functions to app/helpers.php
+   - Wrap in function_exists() check
+   - Document in PHPDoc with usage examples
+   - Add tests in tests/Unit/
 
 --------------------------------------------------------------------------------
 Behavioral rules for Copilot (how to behave)

@@ -118,6 +118,11 @@ protected function isAccessible(User $user, ?string $path = null): bool
 ## Enums
 - Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
 
+## Helper Functions
+- Global helper functions are defined in `app/helpers.php` and autoloaded via composer.json.
+- Use the `cache_service()` helper for convenient access to CacheService methods.
+- Helper functions should be wrapped in `function_exists()` checks to avoid conflicts.
+
 
 === inertia-laravel/core rules ===
 
