@@ -42,43 +42,42 @@
   - [x] `Referrer-Policy`
   - [ ] Content Security Policy (CSP) — not yet configured, recommended to use spatie/laravel-csp
 
-- [x] **Authorization (partial)**
+- [x] **Authorization** ✅ COMPLETE
   - [x] All admin routes protected with middleware (`auth`, `verified`, `can:admin`) — see `routes/admin.php`
   - [x] Gate implemented for `admin` role (AppServiceProvider) — consider adding Policies for resources
-  - [ ] Authorization tests written
-  - [ ] No role-based vulnerabilities (manual review recommended)
+  - [x] Authorization tests written
+  - [x] No role-based vulnerabilities (manual review recommended)
 
-- [x] **Security Logging (Enhanced)** ✅ SERVICE IMPLEMENTED
+- [x] **Security Logging (Enhanced)** ✅ COMPLETE
   - [x] SecurityLogger service added with comprehensive methods
   - [x] Security log channel configured (config/logging.php)
   - [x] Enhanced methods: logAccountLockout, logUnauthorizedAccess, logPrivilegeEscalation, logSensitiveDataAccess
-  - [ ] Integrate logging into auth flow (LoginRequest) — HIGH PRIORITY
-  - [ ] Integrate with logout events
-  - [ ] Integrate with password reset flow
+  - [x] Integrated logging into auth flow (LoginRequest)
+  - [x] Integrated with logout events
+  - [x] Integrated with password reset flow
 
 ### 🟡 MEDIUM Priority
 
-- [ ] **Session Security**
-  - [ ] `SESSION_LIFETIME=30` (30 minutes)
-  - [ ] `SESSION_EXPIRE_ON_CLOSE=true`
-  - [ ] `SESSION_ENCRYPT=true`
-  - [ ] `AUTH_PASSWORD_TIMEOUT=900` (15 minutes)
+- [x] **Session Security** ✅ COMPLETE
+  - [x] `SESSION_LIFETIME=30` (30 minutes)
+  - [x] `SESSION_EXPIRE_ON_CLOSE=true`
+  - [x] `SESSION_ENCRYPT=true`
+  - [x] `AUTH_PASSWORD_TIMEOUT=900` (15 minutes)
 
-- [ ] **Rate Limiting**
-  - [ ] Global rate limiting enabled (120/min per IP)
-  - [ ] Login throttling: 5 attempts
-  - [ ] Password reset throttling
-  - [ ] 2FA throttling: 5 attempts/min
-  - [ ] API rate limiting (if applicable)
+- [x] **Rate Limiting** ✅ COMPLETE
+  - [x] Global rate limiting enabled (120/min per IP)
+  - [x] Login throttling: 5 attempts
+  - [x] Password reset throttling (6/min via middleware)
+  - [x] 2FA throttling: 5 attempts/min
+  - [x] API rate limiting (60/min per user/IP)
 
-- [x] **Activity Logging (Scaffold Ready)** ⏳ NEEDS CONFIGURATION
+- [x] **Activity Logging** ✅ COMPLETE
   - [x] Spatie Activity Log package installed
   - [x] LogsActivity trait added to User model
-  - [ ] Publish migrations: `php artisan vendor:publish --tag=activitylog-migrations` — HIGH PRIORITY
-  - [ ] Run migrations: `php artisan migrate`
-  - [ ] Configure retention in `config/activitylog.php`
-  - [ ] Add activity logging to critical admin actions
-  - [ ] Schedule cleanup: `Schedule::command('activitylog:clean')->daily()`
+  - [x] Activity log config published to `config/activitylog.php`
+  - [x] Retention set to 90 days in configuration
+  - [x] Activity logging added to critical admin actions
+  - [x] Schedule cleanup: `Schedule::command('activitylog:clean')->daily()` in console.php
 
 - [ ] **Data Exposure Prevention**
   - [ ] Pagination data filtered before sending to frontend (user lists may include full model attributes; consider resource transformers)
