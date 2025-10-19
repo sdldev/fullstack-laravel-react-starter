@@ -103,4 +103,31 @@ class SecurityLogger
             'timestamp' => now()->toIso8601String(),
         ]);
     }
+
+    /**
+     * Log password reset request
+     */
+    public function logPasswordResetRequested(string $email, Request $request): void
+    {
+        Log::channel('security')->info('Password reset requested', [
+            'email' => $email,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'timestamp' => now()->toIso8601String(),
+        ]);
+    }
+
+    /**
+     * Log successful password reset
+     */
+    public function logPasswordResetSuccess($user, Request $request): void
+    {
+        Log::channel('security')->info('Password reset successful', [
+            'user_id' => $user->id,
+            'email' => $user->email,
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+            'timestamp' => now()->toIso8601String(),
+        ]);
+    }
 }

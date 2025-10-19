@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\SecurityLogger;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,10 @@ use Inertia\Response;
 
 class NewPasswordController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(private readonly SecurityLogger $securityLogger) {}
     /**
      * Show the password reset page.
      */
@@ -52,6 +57,9 @@ class NewPasswordController extends Controller
                 ])->save();
 
                 event(new PasswordReset($user));
+
+                // Log successful password reset
+                $this->securityLogger->logPasswordResetSuccess($user, $request);
             }
         );
 

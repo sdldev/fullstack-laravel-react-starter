@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Services\SecurityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -11,6 +12,10 @@ use Inertia\Response;
 
 class PasswordResetLinkController extends Controller
 {
+    /**
+     * Create a new controller instance.
+     */
+    public function __construct(private readonly SecurityLogger $securityLogger) {}
     /**
      * Show the password reset link request page.
      */
@@ -31,6 +36,9 @@ class PasswordResetLinkController extends Controller
         $request->validate([
             'email' => 'required|email',
         ]);
+
+        // Log password reset request
+        $this->securityLogger->logPasswordResetRequested($request->input('email'), $request);
 
         Password::sendResetLink(
             $request->only('email')

@@ -7,7 +7,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+use Illuminate\Cache\RateLimiting\Limit;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -18,6 +21,15 @@ return Application::configure(basePath: dirname(__DIR__))
         then: function () {
             Route::middleware('web')
                 ->group(base_path('routes/admin.php'));
+
+            // Configure rate limiters
+            RateLimiter::for('global', function (Request $request) {
+                return Limit::perMinute(120)->by($request->ip());
+            });
+
+            RateLimiter::for('api', function (Request $request) {
+                return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            });
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -28,6 +40,15 @@ return Application::configure(basePath: dirname(__DIR__))
             HandleInertiaRequests::class,
             AddLinkHeadersForPreloadedAssets::class,
             SecurityHeaders::class,
+        ]);
+
+        // Apply global rate limiting to web routes
+        $middleware->web(prepend: [
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]);
+
+        $middleware->alias([
+            'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
