@@ -1,26 +1,16 @@
-import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
-import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarHeader,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
-import { type MainNavItem, type NavItem } from '@/types';
+import { type MainNavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import {
-    ArrowRight,
-    Cog,
-    LayoutGrid,
-    Shield,
-    Users,
-    Wrench,
-} from 'lucide-react';
+import { Cog, Dot, LayoutGrid, Shield, Users, Wrench } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: MainNavItem[] = [
@@ -46,22 +36,22 @@ const mainNavItems: MainNavItem[] = [
             {
                 title: 'Profile',
                 href: '/settings/profile',
-                icon: ArrowRight,
+                icon: Dot,
             },
             {
                 title: 'Password',
                 href: '/settings/password',
-                icon: ArrowRight,
+                icon: Dot,
             },
             {
                 title: 'Two Factor Authentication',
                 href: '/settings/two-factor',
-                icon: ArrowRight,
+                icon: Dot,
             },
             {
                 title: 'Theme',
                 href: '/settings/appearance',
-                icon: ArrowRight,
+                icon: Dot,
             },
         ],
     },
@@ -72,44 +62,25 @@ const mainNavItems: MainNavItem[] = [
             {
                 title: 'Audit Logs',
                 href: '/admin/audit-logs',
-                icon: ArrowRight,
+                icon: Dot,
             },
             {
                 title: 'Security Logs',
                 href: '/admin/security-logs',
-                icon: ArrowRight,
+                icon: Dot,
             },
-        ],
-    },
-    {
-        title: 'API',
-        icon: Shield,
-        subitem: [
             {
                 title: 'API Documentation',
                 href: '/admin/api-docs',
-                icon: ArrowRight,
+                icon: Dot,
             },
             {
                 title: 'API Keys',
                 href: '/admin/api-tokens',
-                icon: ArrowRight,
+                icon: Dot,
             },
         ],
     },
-];
-
-const footerNavItems: NavItem[] = [
-    // {
-    //     title: 'Repository',
-    //     href: 'https://github.com/laravel/react-starter-kit',
-    //     icon: Folder,
-    // },
-    // {
-    //     title: 'Documentation',
-    //     href: 'https://laravel.com/docs/starter-kits#react',
-    //     icon: BookOpen,
-    // },
 ];
 
 export function AppSidebar() {
@@ -130,11 +101,6 @@ export function AppSidebar() {
             <SidebarContent>
                 <NavMain items={mainNavItems} />
             </SidebarContent>
-
-            <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
-                <NavUser />
-            </SidebarFooter>
         </Sidebar>
     );
 }

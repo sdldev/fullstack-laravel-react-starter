@@ -1,4 +1,5 @@
 import { AppContent } from '@/components/app-content';
+import AppFooter from '@/components/app-footer';
 import { AppShell } from '@/components/app-shell';
 import { AppSidebar } from '@/components/app-sidebar';
 import { AppSidebarHeader } from '@/components/app-sidebar-header';
@@ -17,6 +18,7 @@ export default function AppSidebarLayout({
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 {children}
                 <Toaster richColors position="bottom-center" />
+                <AppFooter />
             </AppContent>
         </AppShell>
     );

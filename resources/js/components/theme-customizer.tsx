@@ -1,12 +1,13 @@
 import { Label } from '@/components/ui/label';
+import { useAppearance, type Appearance } from '@/hooks/use-appearance';
 import {
     ThemeColor,
     ThemeRadius,
     useThemeCustomization,
 } from '@/hooks/use-theme-customization';
 import { cn } from '@/lib/utils';
-import { Check } from 'lucide-react';
-import { HTMLAttributes } from 'react';
+import { Check, Monitor, Moon, Sun } from 'lucide-react';
+import { HTMLAttributes, type ReactNode } from 'react';
 
 export default function ThemeCustomizer({
     className = '',
@@ -14,6 +15,7 @@ export default function ThemeCustomizer({
 }: HTMLAttributes<HTMLDivElement>) {
     const { radius, color, updateRadius, updateColor } =
         useThemeCustomization();
+    const { appearance, updateAppearance } = useAppearance();
 
     const radiusOptions: { value: ThemeRadius; label: string }[] = [
         { value: 'none', label: 'None' },
@@ -62,6 +64,56 @@ export default function ThemeCustomizer({
 
     return (
         <div className={cn('space-y-6', className)} {...props}>
+            {/* Appearance Mode Selection */}
+            <div className="space-y-3">
+                <Label className="text-sm font-medium">Mode</Label>
+                <div className="grid grid-cols-3 gap-3">
+                    {(
+                        [
+                            {
+                                value: 'light',
+                                label: 'Light',
+                                icon: <Sun className="h-5 w-5" />,
+                            },
+                            {
+                                value: 'dark',
+                                label: 'Dark',
+                                icon: <Moon className="h-5 w-5" />,
+                            },
+                            {
+                                value: 'system',
+                                label: 'System',
+                                icon: <Monitor className="h-5 w-5" />,
+                            },
+                        ] as {
+                            value: Appearance;
+                            label: string;
+                            icon: ReactNode;
+                        }[]
+                    ).map((option) => (
+                        <button
+                            key={option.value}
+                            onClick={() => updateAppearance(option.value)}
+                            className={cn(
+                                'relative flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors hover:bg-muted',
+                                appearance === option.value
+                                    ? 'border-primary'
+                                    : 'border-border',
+                            )}
+                        >
+                            {appearance === option.value && (
+                                <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
+                            )}
+                            <div className="flex h-12 w-12 items-center justify-center">
+                                {option.icon}
+                            </div>
+                            <span className="text-xs font-medium">
+                                {option.label}
+                            </span>
+                        </button>
+                    ))}
+                </div>
+            </div>
             {/* Radius Selection */}
             <div className="space-y-3">
                 <Label className="text-sm font-medium">Radius</Label>

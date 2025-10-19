@@ -26,9 +26,28 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
 
     return (
         <>
-            <DropdownMenuLabel className="p-0 font-normal">
+            <DropdownMenuLabel
+                className="p-0 font-normal"
+                role="group"
+                aria-label={`User menu for ${(user.full_name || user.name) as string}`}
+            >
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                    <UserInfo user={user} showEmail={true} />
+                    <UserInfo user={user} />
+
+                    {/*
+                      Responsive text:
+                      - On small screens allow wrapping (no truncation) so name/email can wrap onto two lines.
+                      - On md+ screens keep truncation to fit the dropdown width.
+                      - Add a subtle entrance animation when the dropdown content mounts.
+                    */}
+                    <div className="flex animate-[fadeInUp_160ms_ease] flex-col leading-tight md:max-w-[160px]">
+                        <span className="block font-medium md:truncate">
+                            {(user.full_name || user.name) as string}
+                        </span>
+                        <span className="block text-xs text-muted-foreground md:truncate">
+                            {(user.email || '') as string}
+                        </span>
+                    </div>
                 </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
