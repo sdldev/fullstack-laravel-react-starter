@@ -435,6 +435,10 @@ Pint automatically handles most formatting, but ensure:
 # Format TypeScript/React
 npx eslint . --fix
 
+
+# Final Check
+composer pre-commit
+
 # Run tests
 ./vendor/bin/pest --no-coverage
 ```
