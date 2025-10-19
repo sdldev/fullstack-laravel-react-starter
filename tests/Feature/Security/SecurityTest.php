@@ -3,7 +3,7 @@
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-uses(RefreshDatabase::class)->in('Feature');
+uses(RefreshDatabase::class);
 
 test('it includes security headers', function () {
     $response = $this->get('/');
