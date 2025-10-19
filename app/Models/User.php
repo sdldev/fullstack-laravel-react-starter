@@ -32,10 +32,10 @@ class User extends Authenticatable
 
     /**
      * Get the user's image URL with fallback to default avatar.
-     * 
+     *
      * If user has no image, return default user.svg from public folder.
      * If user has image, return full storage URL.
-     * 
+     *
      * Note: Image is stored as 'users/avatar-xxx.webp' in database,
      * so we prepend 'storage/' to get full public URL.
      */
@@ -50,7 +50,7 @@ class User extends Authenticatable
         // Build the correct public URL: /storage/users/{filename}
         $filename = ltrim($this->attributes['image'], '/');
 
-        return asset('storage/users/' . $filename);
+        return asset('storage/users/'.$filename);
     }
 
     /**
@@ -60,7 +60,7 @@ class User extends Authenticatable
     public static function generateMemberNumber(): string
     {
         for ($i = 0; $i < 10; $i++) {
-            $candidate = 'M' . str_pad((string) random_int(1, 9999), 4, '0', STR_PAD_LEFT);
+            $candidate = 'M'.str_pad((string) random_int(1, 9999), 4, '0', STR_PAD_LEFT);
 
             if (! self::where('member_number', $candidate)->exists()) {
                 return $candidate;
@@ -68,7 +68,7 @@ class User extends Authenticatable
         }
 
         // Fallback: unlikely collision case
-        return 'M' . strtoupper(bin2hex(random_bytes(3)));
+        return 'M'.strtoupper(bin2hex(random_bytes(3)));
     }
 
     protected $hidden = [

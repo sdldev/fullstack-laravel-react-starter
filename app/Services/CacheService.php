@@ -33,10 +33,7 @@ class CacheService
     /**
      * Remember users list using tags when available, otherwise plain remember.
      *
-     * @param  int  $page
-     * @param  int  $perPage
      * @param  int|\DateTimeInterface|\DateInterval  $ttl
-     * @param  \Closure  $callback
      * @return mixed
      */
     public function rememberUsersList(int $page, int $perPage, $ttl, Closure $callback)
@@ -59,6 +56,7 @@ class CacheService
     {
         if ($this->supportsTags()) {
             Cache::tags(['users'])->flush();
+
             return;
         }
 

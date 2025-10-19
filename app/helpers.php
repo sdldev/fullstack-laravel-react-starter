@@ -23,8 +23,6 @@ if (! function_exists('cache_service')) {
      * if (cache_service()->supportsTags()) {
      *     // Use tag-based operations
      * }
-     *
-     * @return \App\Services\CacheService
      */
     function cache_service(): CacheService
     {

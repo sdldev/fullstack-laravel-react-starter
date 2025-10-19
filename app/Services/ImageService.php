@@ -239,7 +239,10 @@ class ImageService
             }
 
             // Verify MIME type from actual file content matches declared MIME
-            $actualMimeType = $imageInfo['mime'] ?? null;
+            // getimagesize() returned a non-false value above, so the 'mime' index
+            // is guaranteed to exist for valid images. Use direct access to satisfy
+            // static analysis (PHPStan) while preserving runtime behavior.
+            $actualMimeType = $imageInfo['mime'];
             if (! in_array($actualMimeType, $allowedMimes, true)) {
                 \Log::warning('File rejected: Content MIME type mismatch', [
                     'declared_mime' => $file->getMimeType(),

@@ -29,7 +29,7 @@ it('uploads avatar on user update and persists filename and file on disk', funct
         'address' => $user->address ?? 'Address',
         'phone' => $user->phone ?? '08123456789',
         'join_date' => $user->join_date ? $user->join_date->format('Y-m-d') : now()->format('Y-m-d'),
-        'is_active' => (int)$user->is_active,
+        'is_active' => (int) $user->is_active,
         'image' => $file,
     ]);
 
@@ -44,10 +44,10 @@ it('uploads avatar on user update and persists filename and file on disk', funct
     expect(str_ends_with($user->image, '.webp'))->toBeTrue();
 
     // File should exist on the public disk under users/{filename}
-    Storage::disk('public')->assertExists('users/' . $user->image);
+    Storage::disk('public')->assertExists('users/'.$user->image);
 
     // Read the file and assert it's a WebP (finfo MIME type check)
-    $contents = Storage::disk('public')->get('users/' . $user->image);
+    $contents = Storage::disk('public')->get('users/'.$user->image);
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->buffer($contents);
 
@@ -55,7 +55,6 @@ it('uploads avatar on user update and persists filename and file on disk', funct
     // (Intervention/Imagick). Accept JPEG as a fallback to keep tests stable.
     expect(in_array($mime, ['image/webp', 'image/jpeg']))->toBeTrue();
 });
-
 
 it('deletes old avatar file when a new avatar is uploaded', function () {
     Storage::fake('public');
@@ -84,7 +83,7 @@ it('deletes old avatar file when a new avatar is uploaded', function () {
         'address' => $user->address ?? 'Address',
         'phone' => $user->phone ?? '08123456789',
         'join_date' => $user->join_date ? $user->join_date->format('Y-m-d') : now()->format('Y-m-d'),
-        'is_active' => (int)$user->is_active,
+        'is_active' => (int) $user->is_active,
         'image' => $file,
     ]);
 

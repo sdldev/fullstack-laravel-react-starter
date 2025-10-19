@@ -18,9 +18,9 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { useForm } from '@inertiajs/react';
-import { FormEventHandler, useRef, useState, useEffect } from 'react';
+import { UploadCloud, X } from 'lucide-react';
+import { FormEventHandler, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { UploadCloud, X, RotateCw } from 'lucide-react';
 
 interface CreateUserModalProps {
     isOpen: boolean;
@@ -79,9 +79,16 @@ export default function CreateUserModal({
     const handleFileChange = (file: File | null) => {
         if (!file) return;
 
-        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        const validTypes = [
+            'image/jpeg',
+            'image/png',
+            'image/gif',
+            'image/webp',
+        ];
         if (!validTypes.includes(file.type)) {
-            toast.error('Please upload a valid image file (JPG, PNG, GIF, WebP)');
+            toast.error(
+                'Please upload a valid image file (JPG, PNG, GIF, WebP)',
+            );
             return;
         }
 
@@ -453,7 +460,8 @@ export default function CreateUserModal({
                                         </span>
                                     </Label>
                                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        JPG, PNG, GIF, WebP • Max 10MB • 200x200px
+                                        JPG, PNG, GIF, WebP • Max 10MB •
+                                        200x200px
                                     </p>
                                 </div>
                             )}

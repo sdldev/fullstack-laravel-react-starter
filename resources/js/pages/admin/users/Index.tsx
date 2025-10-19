@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
 import { Head } from '@inertiajs/react';
-import { Edit, Eye, Plus, Trash2, User as UserIcon } from 'lucide-react';
+import { Edit, Eye, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import CreateUserModal from './CreateUserModal';
 import DeleteUserModal from './DeleteUserModal';
@@ -121,10 +121,13 @@ export default function Index({ users, breadcrumbs }: UsersIndexProps) {
                                             className="h-8 w-8 rounded object-cover"
                                             onError={(e) => {
                                                 // Fallback if image fails to load
-                                                e.currentTarget.src = '/user.webp';
+                                                e.currentTarget.src =
+                                                    '/user.webp';
                                             }}
                                         />
-                                        <span>{user.full_name || user.name}</span>
+                                        <span>
+                                            {user.full_name || user.name}
+                                        </span>
                                     </div>
                                 </TableCell>
                                 <TableCell>{user.email}</TableCell>

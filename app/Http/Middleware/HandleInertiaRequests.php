@@ -21,8 +21,6 @@ class HandleInertiaRequests extends Middleware
     /**
      * Determine the current asset version.
      * Dynamically select the root view based on the request path.
-     *
-     * @return string
      */
     public function rootView(Request $request): string
     {

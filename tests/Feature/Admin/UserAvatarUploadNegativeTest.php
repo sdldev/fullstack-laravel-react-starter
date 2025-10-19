@@ -27,7 +27,7 @@ it('rejects oversized images when updating user avatar', function () {
         'address' => $user->address ?? 'Address',
         'phone' => $user->phone ?? '08123456789',
         'join_date' => $user->join_date ? $user->join_date->format('Y-m-d') : now()->format('Y-m-d'),
-        'is_active' => (int)$user->is_active,
+        'is_active' => (int) $user->is_active,
         'image' => $large,
     ]);
 
@@ -58,7 +58,7 @@ it('rejects non-image MIME type uploads', function () {
         'address' => $user->address ?? 'Address',
         'phone' => $user->phone ?? '08123456789',
         'join_date' => $user->join_date ? $user->join_date->format('Y-m-d') : now()->format('Y-m-d'),
-        'is_active' => (int)$user->is_active,
+        'is_active' => (int) $user->is_active,
         'image' => $file,
     ]);
 
@@ -84,7 +84,7 @@ it('rejects JSON submissions for image (should be multipart)', function () {
         'address' => $user->address ?? 'Address',
         'phone' => $user->phone ?? '08123456789',
         'join_date' => $user->join_date ? $user->join_date->format('Y-m-d') : now()->format('Y-m-d'),
-        'is_active' => (int)$user->is_active,
+        'is_active' => (int) $user->is_active,
         'image' => 'not-a-file',
     ]);
 

@@ -23,7 +23,7 @@ test('cache_service provides access to usersListKey method', function () {
     $cacheService = cache_service();
 
     expect(method_exists($cacheService, 'usersListKey'))->toBeTrue();
-    
+
     $key = $cacheService->usersListKey(1, 15);
     expect($key)->toBe('users_list_page_1_per_15');
 });

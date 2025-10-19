@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Users\StoreUserRequest;
 use App\Http\Requests\Admin\Users\UpdateUserRequest;
 use App\Models\User;
-use App\Services\ImageService;
 use App\Services\CacheService;
-use Illuminate\Support\Facades\Log;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -75,8 +75,8 @@ class UserController extends Controller
 
         User::create($data);
 
-    // Clear users list cache to show fresh data
-    $this->cacheService->clearUsersList();
+        // Clear users list cache to show fresh data
+        $this->cacheService->clearUsersList();
 
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
@@ -146,8 +146,8 @@ class UserController extends Controller
 
         $user->update($data);
 
-    // Clear users list cache keys (tags or explicit keys depending on driver)
-    $this->cacheService->clearUsersList();
+        // Clear users list cache keys (tags or explicit keys depending on driver)
+        $this->cacheService->clearUsersList();
 
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
@@ -167,8 +167,8 @@ class UserController extends Controller
 
         $user->delete();
 
-    // Clear users list cache keys
-    $this->cacheService->clearUsersList();
+        // Clear users list cache keys
+        $this->cacheService->clearUsersList();
 
         return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
     }
